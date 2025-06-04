@@ -10,49 +10,7 @@
   <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
       data-sidebar-position="fixed" data-header-position="fixed">
 
-      <!--  App Topstrip -->
-      <div class="app-topstrip bg-dark py-6 px-3 w-100 d-lg-flex align-items-center justify-content-between">
-        <div class="d-flex align-items-center justify-content-center gap-5 mb-2 mb-lg-0">
-          </a>
-
-          <div class="d-none d-xl-flex align-items-center gap-3">
-              <i class="ti ti-lifebuoy fs-5"></i>
-            </a>
-              <i class="ti ti-gift fs-5"></i>
-            </a>
-          </div>
-        </div>
-
-        <div class="d-lg-flex align-items-center gap-2">
-          <div class="d-flex align-items-center justify-content-center gap-2">
-            <div class="dropdown d-flex">
-                data-bs-toggle="dropdown" aria-expanded="false">
-              </a>
-              <div class="-" aria-labelledby="drop3">
-                <div class="message-body">
-                  <a target="_blank"
-                    class="dropdown-item d-flex align-items-center gap-1">
-                  </a>
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div class="dropdown d-flex">
-              <a class="-" href="javascript:void(0)" id="drop4"
-                data-bs-toggle="dropdown" aria-expanded="false">
-              </a>
-              <div class="-" aria-labelledby="drop4">
-                <div class="message-body">
-                  <a target="_blank"
-                    class="dropdown-item d-flex align-items-center gap-1">
-
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- App Topstrip - DIHAPUS -->
     <!-- Sidebar Start -->
     @include('admin.sidebar')
     <!--  Sidebar End -->
@@ -64,9 +22,9 @@
 <br><br>
         <!-- Konten Struktur Organisasi -->
         <div class="container-fluid">
-            <h1>Struktur Organisasi</h1>
+            <h1>Organizational Structure</h1>
 
-            <a href="{{ route('admin.struktur-organisasi.create') }}" class="btn btn-primary mb-3">Tambah Struktur Organisasi</a>
+            <a href="{{ route('admin.struktur-organisasi.create') }}" class="btn btn-primary mb-3">Create Struktur Organisasi</a>
 
             @if(session('success'))
                 <div class="alert alert-success">
@@ -99,12 +57,12 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="{{ route('admin.struktur-organisasi.show', $item->id) }}" class="btn btn-sm btn-info">Lihat</a>
+                                    <a href="{{ route('struktur-organisasi.public', $item->id) }}" class="btn btn-sm btn-info">See</a>
                                     <a href="{{ route('admin.struktur-organisasi.edit', $item->id) }}" class="btn btn-sm btn-warning">Edit</a>
                                     <form action="{{ route('admin.struktur-organisasi.destroy', $item->id) }}" method="POST" style="display: inline-block;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus?')">Hapus</button>
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus?')">Delete</button>
                                     </form>
                                 </td>
                             </tr>

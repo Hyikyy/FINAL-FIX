@@ -19,6 +19,36 @@ class TeachingAssistantController extends Controller
         return view('admin.teaching_assistants.index', compact('teachingAssistants'));
     }
 
+    public function indexPublic()
+    {
+        // Ambil data teaching assistants dari database
+        // Contoh: ambil semua TA yang aktif dan urutkan berdasarkan nama
+
+        $teachingAssistants = TeachingAssistant::all();
+
+        return view('teaching_assistants.index', compact('teachingAssistants'));
+
+        // Alternatif jika tidak ada data spesifik, hanya halaman statis:
+        // return view('public.teaching_assistants.index');
+    }
+
+
+    public function showPublicDetail(TeachingAssistant $teachingAssistant)
+    {
+        // Variabel $teachingAssistant sudah otomatis di-inject oleh Laravel
+        // berdasarkan parameter rute (misalnya {teachingAssistant}).
+        // Jika TA dengan ID/slug yang diberikan tidak ditemukan, Laravel akan
+        // otomatis menampilkan error 404.
+
+        // Anda bisa menambahkan logika di sini jika perlu mengambil data relasi,
+        // meskipun untuk halaman detail sederhana biasanya tidak perlu jika field
+        // sudah ada di model utama.
+        // Contoh: $teachingAssistant->load('matakuliahYangDiampu');
+
+        
+        return view('teaching_assistants.show', compact('teachingAssistant'));
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -46,12 +76,12 @@ class TeachingAssistantController extends Controller
 
         $data = $request->all();
 
-        if ($request->hasFile('gambar')) {
-            $gambar = $request->file('gambar');
-            $namaGambar = time() . '.' . $gambar->getClientOriginalExtension();
-            $path = $gambar->storeAs('public/teaching_assistants', $namaGambar); // Simpan di storage/app/public/teaching_assistants
-            $data['gambar'] = $namaGambar;
-        }
+        // Di store() dan update()
+if ($request->hasFile('gambar')) {
+    // ... (logika hapus gambar lama untuk update) ...
+    $pathRelatifDariPublicDisk = $request->file('gambar')->store('ta_fotos', 'public'); // Simpan ke storage/app/public/ta_fotos
+    $data['gambar'] = $pathRelatifDariPublicDisk;
+}
 
         $data = $request->all();
     $data['user_id'] = auth()->user()->id; // Menambahkan user_id berdasarkan user yang sedang login
@@ -59,7 +89,7 @@ class TeachingAssistantController extends Controller
         TeachingAssistant::create($data);
 
         return redirect()->route('admin.teaching_assistants.index')
-            ->with('success', 'Asisten Dosen berhasil ditambahkan.');
+            ->with('success', 'Daftar Asisten Dosen berhasil ditambahkan.');
     }
 
     /**
@@ -117,7 +147,7 @@ class TeachingAssistantController extends Controller
         $teachingAssistant->update($data);
 
         return redirect()->route('admin.teaching_assistants.index')
-            ->with('success', 'Asisten Dosen berhasil diperbarui.');
+            ->with('success', 'Daftar Asisten Dosen berhasil diperbarui.');
     }
 
     /**
@@ -136,7 +166,7 @@ class TeachingAssistantController extends Controller
         $teachingAssistant->delete();
 
         return redirect()->route('admin.teaching_assistants.index')
-            ->with('success', 'Asisten Dosen berhasil dihapus.');
+            ->with('success', 'Daftar Asisten Dosen berhasil dihapus.');
     }
 
     /**
@@ -147,6 +177,7 @@ class TeachingAssistantController extends Controller
      */
     public function showPublic(TeachingAssistant $teachingAssistant)
     {
+
         return view('teaching_assistants.show_public', compact('teachingAssistant'));
     }
 }

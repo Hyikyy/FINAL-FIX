@@ -3,133 +3,92 @@
 
 <head>
     @include('admin.head')
-    <title>Tambah Apa Kata Alumni</title>
+    <title>Create Apa Kata Alumni</title>
 </head>
 
 <body>
-  <!--  Body Wrapper -->
-  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    <!--  Body Wrapper -->
+    <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
       data-sidebar-position="fixed" data-header-position="fixed">
 
-      <!--  App Topstrip -->
-      <div class="app-topstrip bg-dark py-6 px-3 w-100 d-lg-flex align-items-center justify-content-between">
-        <div class="d-flex align-items-center justify-content-center gap-5 mb-2 mb-lg-0">
-          </a>
+      <!-- Sidebar Start -->
+      @include('admin.sidebar')
+      <!--  Sidebar End -->
 
-          <div class="d-none d-xl-flex align-items-center gap-3">
-              <i class="ti ti-lifebuoy fs-5"></i>
-            </a>
-              <i class="ti ti-gift fs-5"></i>
-            </a>
+      <!--  Main wrapper -->
+      <div class="body-wrapper">
+        <!--  Header Start -->
+        @include('admin.header')
+        <!--  Header End -->
+        <br><br>
+          <!-- Konten Tambah Apa Kata Alumni -->
+          <div class="container-fluid">
+              <h1>Create Apa Kata Alumni</h1>
+
+              {{-- Tampilkan error validasi jika ada --}}
+              @if ($errors->any())
+                  <div class="alert alert-danger">
+                      <ul>
+                          @foreach ($errors->all() as $error)
+                              <li>{{ $error }}</li>
+                          @endforeach
+                      </ul>
+                  </div>
+              @endif
+
+              <form action="{{ route('admin.apa_kata_alumni.store') }}" method="POST" enctype="multipart/form-data">
+                  @csrf
+                  <div class="mb-3">
+                      <label for="nama" class="form-label">Nama Alumni</label>
+                      <input type="text" class="form-control" id="nama" name="nama" value="{{ old('nama') }}" required>
+                  </div>
+
+                  <div class="mb-3">
+                      <label for="pekerjaan" class="form-label">Pekerjaan Saat Ini</label>
+                      <input type="text" class="form-control" id="pekerjaan" name="pekerjaan" value="{{ old('pekerjaan') }}" required>
+                  </div>
+
+                  <div class="mb-3">
+                      <label for="angkatan" class="form-label">Angkatan</label>
+                      <input type="number" class="form-control" id="angkatan" name="angkatan" value="{{ old('angkatan') }}" placeholder="Contoh: 2018" required>
+                  </div>
+
+                  <div class="mb-3">
+                      <label for="isi" class="form-label">Apa Kata Alumni (Testimoni)</label>
+                      <textarea class="form-control" id="isi" name="isi" rows="5" required>{{ old('isi') }}</textarea>
+                  </div>
+
+                  <div class="mb-3">
+                      <label for="gambar" class="form-label">Gambar Alumni (Opsional)</label>
+                      <input type="file" class="form-control" id="gambar" name="gambar" onchange="previewImage()">
+                      <img id="image-preview" src="#" alt="Preview Gambar" style="max-width: 200px; max-height: 200px; margin-top: 10px; display: none;"/>
+                  </div>
+
+                  <button type="submit" class="btn btn-primary">Save</button>
+                  <a href="{{ route('admin.apa_kata_alumni.index') }}" class="btn btn-secondary">Cancel</a>
+              </form>
           </div>
-        </div>
+          <!-- Akhir Konten Tambah Apa Kata Alumni -->
 
-        <div class="d-lg-flex align-items-center gap-2">
-          <div class="d-flex align-items-center justify-content-center gap-2">
-            <div class="dropdown d-flex">
-                data-bs-toggle="dropdown" aria-expanded="false">
-              </a>
-              <div class="-" aria-labelledby="drop3">
-                <div class="message-body">
-                  <a target="_blank"
-                    class="dropdown-item d-flex align-items-center gap-1">
-                  </a>
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div class="dropdown d-flex">
-              <a class="-" href="javascript:void(0)" id="drop4"
-                data-bs-toggle="dropdown" aria-expanded="false">
-              </a>
-              <div class="-" aria-labelledby="drop4">
-                <div class="message-body">
-                  <a target="_blank"
-                    class="dropdown-item d-flex align-items-center gap-1">
-
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
-        <!-- Sidebar Start -->
-        @include('admin.sidebar')
-        <!--  Sidebar End -->
-        <!--  Main wrapper -->
-        <div class="body-wrapper">
-            <!--  Header Start -->
-            @include('admin.header')
-            <!--  Header End -->
-            <br><br>
-            <!-- Konten Apa Kata Alumni -->
-            <div class="container-fluid">
-                <h1>Tambah Apa Kata Alumni</h1>
-
-                <div class="card">
-                    <div class="card-body">
-                        @if ($errors->any())
-                        <div class="alert alert-danger">
-                            <ul>
-                                @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                        @endif
-                        <form action="{{ route('admin.apa_kata_alumni.store') }}" method="POST"  enctype="multipart/form-data">
-                            @csrf
-
-                            <div class="mb-3">
-                                <label for="nama" class="form-label">Nama</label>
-                                <input type="text" class="form-control" id="nama" name="nama"
-                                    value="{{ old('nama') }}" required>
-                            </div>
-
-                            <!-- Tambahkan Input Pekerjaan -->
-                            <div class="mb-3">
-                                <label for="pekerjaan" class="form-label">Pekerjaan</label>
-                                <input type="text" class="form-control" id="pekerjaan" name="pekerjaan"
-                                    value="{{ old('pekerjaan') }}" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="angkatan" class="form-label">Angkatan</label>
-                                <input type="number" class="form-control" id="angkatan" name="angkatan"
-                                    value="{{ old('angkatan') }}" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="isi" class="form-label">Isi</label>
-                                <textarea class="form-control" id="isi" name="isi" rows="3"
-                                    required>{{ old('isi') }}</textarea>
-                            </div>
-                              <!-- Input Gambar Ditambahkan -->
-                            <div class="mb-3">
-                                <label for="gambar" class="form-label">Gambar</label>
-                                <input type="file" class="form-control" id="gambar" name="gambar">
-                            </div>
-
-                            <button type="submit" class="btn btn-primary">Simpan</button>
-                            <a href="{{ route('admin.apa_kata_alumni.index') }}" class="btn btn-secondary">Batal</a>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <!-- Akhir Konten Apa Kata Alumni -->
-
-        </div>
     </div>
-    <script src="{{ asset('admin/assets/libs/jquery/dist/jquery.min.js') }}"></script>
-    <script src="{{ asset('admin/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('admin/assets/js/sidebarmenu.js') }}"></script>
-    <script src="{{ asset('admin/assets/js/app.min.js') }}"></script>
-    <script src="{{ asset('admin/assets/libs/apexcharts/dist/apexcharts.min.js') }}"></script>
-    <script src="{{ asset('admin/assets/libs/simplebar/dist/simplebar.js') }}"></script>
-    <script src="{{ asset('admin/assets/js/dashboard.js') }}"></script>
-    <!-- solar icons -->
-    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
-</body>
 
+    {{-- @include('admin.scripts') Atau daftar script individual seperti di index --}}
+
+    <script>
+        function previewImage() {
+            const image = document.querySelector('#gambar');
+            const imgPreview = document.querySelector('#image-preview');
+
+            imgPreview.style.display = 'block';
+
+            const oFReader = new FileReader();
+            oFReader.readAsDataURL(image.files[0]);
+
+            oFReader.onload = function(oFREvent) {
+                imgPreview.src = oFREvent.target.result;
+            }
+        }
+    </script>
+</body>
 </html>

@@ -11,49 +11,7 @@
   <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
       data-sidebar-position="fixed" data-header-position="fixed">
 
-      <!--  App Topstrip -->
-      <div class="app-topstrip bg-dark py-6 px-3 w-100 d-lg-flex align-items-center justify-content-between">
-        <div class="d-flex align-items-center justify-content-center gap-5 mb-2 mb-lg-0">
-          </a>
-
-          <div class="d-none d-xl-flex align-items-center gap-3">
-              <i class="ti ti-lifebuoy fs-5"></i>
-            </a>
-              <i class="ti ti-gift fs-5"></i>
-            </a>
-          </div>
-        </div>
-
-        <div class="d-lg-flex align-items-center gap-2">
-          <div class="d-flex align-items-center justify-content-center gap-2">
-            <div class="dropdown d-flex">
-                data-bs-toggle="dropdown" aria-expanded="false">
-              </a>
-              <div class="-" aria-labelledby="drop3">
-                <div class="message-body">
-                  <a target="_blank"
-                    class="dropdown-item d-flex align-items-center gap-1">
-                  </a>
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div class="dropdown d-flex">
-              <a class="-" href="javascript:void(0)" id="drop4"
-                data-bs-toggle="dropdown" aria-expanded="false">
-              </a>
-              <div class="-" aria-labelledby="drop4">
-                <div class="message-body">
-                  <a target="_blank"
-                    class="dropdown-item d-flex align-items-center gap-1">
-
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!--  App Topstrip - DIHAPUS -->
     <!-- Sidebar Start -->
     @include('admin.sidebar')
     <!--  Sidebar End -->
@@ -65,7 +23,7 @@
 <br><br>
         <!-- Konten Asisten Dosen -->
         <div class="container-fluid">
-            <h1>Edit Asisten Dosen</h1>
+            <h1>Edit Profile Asisten Dosen</h1>
 
             <div class="card">
                 <div class="card-body">

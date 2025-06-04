@@ -13,15 +13,15 @@ return new class extends Migration
     {
         Schema::create('keuangan', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id'); // Foreign key ke tabel users (WAJIB LOG
-            $table->decimal('pemasukan', 15, 2)->default(0);
-            $table->decimal('pengeluaran', 15, 2)->default(0);
-            $table->decimal('saldo', 15, 2)->default(0);
-            $table->text('laporan')->nullable();
+            $table->date('tanggal'); // Tanggal transaksi
+            $table->string('deskripsi'); // Keterangan transaksi
+            $table->decimal('jumlah', 15, 2); // Jumlah uang, selalu positif
+            $table->enum('jenis', ['pemasukan', 'pengeluaran']); // Jenis transaksi
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null'); // ID user yang mencatat/mengelola
             $table->timestamps();
-
-        $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
+
+        
     }
 
     /**

@@ -10,5 +10,32 @@ class Keuangan extends Model
     use HasFactory;
 
     protected $table = 'keuangan';
-    protected $fillable = ['pemasukan', 'pengeluaran', 'saldo', 'laporan', 'user_id'];
+    protected $fillable = [
+    'tanggal', // <--- PASTIKAN INI ADA
+    'deskripsi',
+    'jumlah',
+    'jenis',
+    'user_id',
+    ];
+
+    protected $casts = [
+        'tanggal' => 'date', // Otomatis cast ke instance Carbon
+        'jumlah' => 'decimal:2',
+    ];
+
+     public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function scopePemasukan($query)
+    {
+        return $query->where('jenis', 'pemasukan');
+    }
+
+    public function scopePengeluaran($query)
+    {
+        return $query->where('jenis', 'pengeluaran');
+    }
+
 }

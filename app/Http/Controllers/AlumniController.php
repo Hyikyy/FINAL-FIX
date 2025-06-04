@@ -17,6 +17,34 @@ class AlumniController extends Controller
         return view('admin.alumnis.index', compact('alumnis')); // Kirim data ke view
     }
 
+    public function indexPublic(Request $request)
+    {
+        // Ambil daftar tahun angkatan yang unik dan tidak null, urutkan dari terbaru
+        $angkatans = Alumni::select('angkatan')
+                            ->whereNotNull('angkatan')
+                            ->distinct()
+                            ->orderBy('angkatan', 'desc')
+                            ->pluck('angkatan'); // pluck hanya mengambil kolom 'angkatan'
+
+        // Query dasar untuk alumni
+        $query = Alumni::query();
+
+        // Filter berdasarkan angkatan jika ada di request
+        $selectedAngkatan = $request->query('angkatan'); // Ambil 'angkatan' dari URL query string
+
+        if ($selectedAngkatan) {
+            $query->where('angkatan', $selectedAngkatan);
+        }
+
+        // Ambil data alumni yang sudah difilter atau semua jika tidak ada filter
+        // Urutkan berdasarkan nama atau angkatan, sesuaikan
+        $alumnis = $query->orderBy('angkatan', 'desc')->orderBy('nama', 'asc')->paginate(12); // Contoh paginasi 12 item
+
+        // Pertahankan query string (filter angkatan) pada link paginasi
+        $alumnis->appends($request->query());
+
+        return view('alumni.index', compact('alumnis', 'angkatans', 'selectedAngkatan'));
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -33,6 +61,7 @@ class AlumniController extends Controller
         $request->validate([
             'nama' => 'required',
             'nama_cantik' => 'nullable',
+            'angkatan' => 'nullable|integer|min:1900|max:' . (date('Y') + 5), // Validasi untuk tahun angkatan
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validasi gambar
             'teaching_asisten' => 'boolean',
         ]);
@@ -52,7 +81,7 @@ class AlumniController extends Controller
         Alumni::create($data);
 
         return redirect()->route('admin.alumnis.index')
-            ->with('success', 'Alumni berhasil ditambahkan.');
+            ->with('success', 'Daftar Alumni berhasil ditambahkan.');
     }
 
     /**
@@ -79,6 +108,7 @@ class AlumniController extends Controller
         $request->validate([
             'nama' => 'required',
             'nama_cantik' => 'nullable',
+            'angkatan' => 'nullable|integer|min:1900|max:' . (date('Y') + 5), // Validasi untuk tahun angkatan
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validasi gambar
             'teaching_asisten' => 'boolean',
         ]);
@@ -100,7 +130,7 @@ class AlumniController extends Controller
         $alumni->update($data);
 
         return redirect()->route('admin.alumnis.index')
-            ->with('success', 'Alumni berhasil diperbarui.');
+            ->with('success', 'Daftar Alumni berhasil diperbarui.');
     }
 
     /**
@@ -116,7 +146,7 @@ class AlumniController extends Controller
         $alumni->delete();
 
         return redirect()->route('admin.alumnis.index')
-            ->with('success', 'Alumni berhasil dihapus.');
+            ->with('success', 'Daftar Alumni berhasil dihapus.');
     }
 
     /**
@@ -124,6 +154,13 @@ class AlumniController extends Controller
      */
     public function showPublic(Alumni $alumni)
     {
-        return view('alumni.show_public', compact('alumni'));
+        return view('alumni.show_public', ['alumni' => $alumni]);
+
+    }
+
+    public function showPublicDetail(Alumni $alumni)
+    {
+        // $alumni sudah di-inject
+        return view('alumni.show', compact('alumni'));
     }
 }

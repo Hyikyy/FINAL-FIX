@@ -8,9 +8,9 @@
   <meta name="description" content="@yield('description', '')"> {{-- Deskripsi dinamis --}}
   <meta name="keywords" content="@yield('keywords', '')"> {{-- Keywords dinamis --}}
 
-  <!-- Favicons -->
-  <link href="{{ asset('assets/img/favicon.png') }}" rel="icon">
-  <link href="{{ asset('assets/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+  <link href="{{ asset('assets\img\data himatif\himatif.jpg') }}" rel="icon" type="image/png">
+  <link href="{{ asset('assets/data himatif/logo.png') }}" rel="apple-touch-icon" type="image/png">
+
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -27,6 +27,7 @@
   <!-- Main CSS File -->
   <link href="{{ asset('assets/css/main.css') }}" rel="stylesheet">
 
+  {{-- Ini adalah style inline yang sudah ada, bisa dipertahankan atau dipindah ke main.css --}}
   <style>
     .navbar-hidden {
     transform: translateY(-100%); /* Geser navbar ke atas */
@@ -34,9 +35,15 @@
     }
 
   body {
-      background-color: #414544;
+      /* background-color: #414544; */ /* Warna background body sudah di-set di tag body, bisa dihapus dari sini jika duplikat */
     }
   </style>
+
+  {{-- =======================================================
+    INI YANG PERLU DITAMBAHKAN:
+    Untuk menampung style yang di-push dari view anak
+  ======================================================== --}}
+  @stack('styles')
 
   <!-- =======================================================
   * Template Name: Impact
@@ -50,7 +57,7 @@
 <body class="index-page" style="background-color: #414544;">
 
   <header id="header" class="header fixed-top ">
-
+    {{-- ... (isi header Anda) ... --}}
     <div class="topbar d-flex align-items-center">
       <div class="container d-flex justify-content-center justify-content-md-between">
       </div>
@@ -61,7 +68,6 @@
       <div class="container position-relative d-flex align-items-center justify-content-between">
         <a href="{{ url('/') }}" class="logo d-flex align-items-center">
           <h1 class="sitename"><img src="{{ asset('assets/img/himatif/himatif.jpg') }}">HIMATIF</h1>
-          <span>.</span>
         </a>
 
         @include('layouts.navbar')
@@ -69,13 +75,10 @@
       </div>
 
     </div>
-
   </header>
 
   <main class="main">
-
     @yield('content') {{-- Tempat konten halaman spesifik --}}
-
   </main>
 
   @include("layouts.footer")
@@ -118,9 +121,11 @@
 
         prevScrollPos = currentScrollPos;
     }
-}); 
+});
   </script>
 
-</body>
+  {{-- Tambahkan ini jika Anda juga menggunakan @push('scripts') --}}
+  @stack('scripts')
 
+</body>
 </html>

@@ -18,7 +18,8 @@ class UserSeeder extends Seeder
         // Akun Admin
         User::create([
             'name' => 'Administrator',
-            'email' => 'admin@gmail.com',
+            'nim' => '0000000001',
+            'username' => 'admin',
             'password' => Hash::make('admin12345'), // Ganti 'password' dengan password yang lebih kuat
             'role' => 'admin',
         ]);
@@ -26,7 +27,8 @@ class UserSeeder extends Seeder
         // Akun Pengguna Biasa (Opsional)
         User::create([
             'name' => 'Rizky Immanuel Siburian',
-            'email' => 'rizky@gmail.com',
+            'nim' => '42324045',
+            'username' => 'rizkysiburian',
             'password' => Hash::make('rizky12345'), // Ganti 'password' dengan password yang lebih kuat
             'role' => 'user',
         ]);

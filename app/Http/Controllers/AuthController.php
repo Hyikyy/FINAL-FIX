@@ -24,67 +24,83 @@ class AuthController extends Controller
     }
 
     // Fungsi untuk memproses login
-    public function login(Request $request)
-    {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+    // Fungsi untuk memproses login
+public function login(Request $request)
+{
+    // Tentukan field mana yang akan digunakan untuk login (NIM atau Username)
+    // Contoh: login menggunakan NIM
+    $loginField = 'nim'; // Atau bisa juga 'username'
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
+    $credentials = $request->validate([
+        $loginField => 'required|string', // Validasi untuk NIM atau Username
+        'password' => 'required',
+    ]);
 
-            // Cek apakah user adalah admin (contoh: berdasarkan kolom 'role')
-            if (Auth::user()->role === 'admin') {
-                return redirect()->route('admin.dashboard'); // Redirect ke dashboard admin
-            } else {
-                return redirect()->route('welcome'); // Redirect ke halaman welcome (beranda)
-            }
+    // Sesuaikan array credentials untuk Auth::attempt()
+    $authCredentials = [
+        $loginField => $credentials[$loginField],
+        'password' => $credentials['password']
+    ];
+
+    // Jika Anda ingin mengizinkan login dengan NIM ATAU Username
+    // Anda perlu logika tambahan:
+    // $loginValue = $request->input('login_identifier'); // Misal input field di form bernama 'login_identifier'
+    // $fieldType = filter_var($loginValue, FILTER_VALIDATE_EMAIL) ? 'email' : (is_numeric($loginValue) ? 'nim' : 'username');
+    // $authCredentials = [
+    //     $fieldType => $loginValue,
+    //     'password' => $request->password
+    // ];
+    // Tapi untuk sekarang, kita asumsikan login hanya dengan satu field (misal NIM)
+
+    if (Auth::attempt($authCredentials)) { // Gunakan $authCredentials yang sudah disesuaikan
+        $request->session()->regenerate();
+
+        if (Auth::user()->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        } else {
+            return redirect()->route('welcome');
         }
-
-        return back()->withErrors([
-            'email' => 'Email atau password salah.',
-        ])->withInput($request->only('email')); // Mengembalikan input email agar tidak perlu diisi ulang
     }
+
+    return back()->withErrors([
+        // Ganti pesan error agar sesuai
+        $loginField => 'Kredensial yang diberikan tidak cocok dengan catatan kami.',
+    ])->withInput($request->only($loginField)); // Kembalikan input loginField
+}
 
 
     // Fungsi untuk memproses registrasi
-    public function register(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:user,admin', // Validasi role
+public function register(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'name' => 'required|string|max:255',
+        'nim' => 'required|string|max:255|unique:users,nim', // Validasi NIM, pastikan unik di tabel users kolom nim
+        'username' => 'required|string|max:255|unique:users,username', // Validasi Username, unik
+        'password' => 'required|string|min:8|confirmed',
+    ]);
+
+    if ($validator->fails()) {
+        return back()->withErrors($validator)->withInput();
+    }
+
+    try {
+        $user = User::create([
+            'name' => $request->name,
+            'nim' => $request->nim,
+            'username' => $request->username,
+            'password' => Hash::make($request->password),
+            'role' => 'user',
         ]);
 
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
-        }
+        Auth::login($user);
 
-        try {
-            $user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-                'role' => $request->role, // Simpan role
-            ]);
+        return redirect()->route('welcome'); // Atau 'home'
 
-            Auth::login($user); // Login user setelah registrasi
-
-            // Redirect berdasarkan role
-            if ($request->role === 'admin') {
-                return redirect()->route('admin.dashboard'); // Gunakan route name untuk admin
-            } else {
-                return redirect()->route('home'); // Gunakan route name untuk user
-            }
-        } catch (\Exception $e) {
-            // Log error (gunakan logger Laravel)
-            \Log::error('Error during registration: ' . $e->getMessage());
-
-            return back()->withErrors(['error' => 'Terjadi kesalahan saat mendaftar. Silakan coba lagi.'])->withInput(); // Pesan error umum
-        }
+    } catch (\Exception $e) {
+        \Log::error('Error during registration: ' . $e->getMessage() . ' Stack trace: ' . $e->getTraceAsString());
+        return back()->withErrors(['error' => 'Terjadi kesalahan saat mendaftar. Silakan coba lagi.'])->withInput();
     }
+}
 
 
     // Fungsi untuk logout

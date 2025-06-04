@@ -11,49 +11,6 @@
   <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
       data-sidebar-position="fixed" data-header-position="fixed">
 
-      <!--  App Topstrip -->
-      <div class="app-topstrip bg-dark py-6 px-3 w-100 d-lg-flex align-items-center justify-content-between">
-        <div class="d-flex align-items-center justify-content-center gap-5 mb-2 mb-lg-0">
-          </a>
-
-          <div class="d-none d-xl-flex align-items-center gap-3">
-              <i class="ti ti-lifebuoy fs-5"></i>
-            </a>
-              <i class="ti ti-gift fs-5"></i>
-            </a>
-          </div>
-        </div>
-
-        <div class="d-lg-flex align-items-center gap-2">
-          <div class="d-flex align-items-center justify-content-center gap-2">
-            <div class="dropdown d-flex">
-                data-bs-toggle="dropdown" aria-expanded="false">
-              </a>
-              <div class="-" aria-labelledby="drop3">
-                <div class="message-body">
-                  <a target="_blank"
-                    class="dropdown-item d-flex align-items-center gap-1">
-                  </a>
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div class="dropdown d-flex">
-              <a class="-" href="javascript:void(0)" id="drop4"
-                data-bs-toggle="dropdown" aria-expanded="false">
-              </a>
-              <div class="-" aria-labelledby="drop4">
-                <div class="message-body">
-                  <a target="_blank"
-                    class="dropdown-item d-flex align-items-center gap-1">
-
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     <!-- Sidebar Start -->
     @include('admin.sidebar')
     <!--  Sidebar End -->
@@ -62,10 +19,22 @@
       <!--  Header Start -->
       @include('admin.header')
       <!--  Header End -->
-<br><br>
+      <br><br>
         <!-- Konten Berita -->
         <div class="container-fluid">
             <h1>Edit Berita</h1>
+
+            {{-- MENAMPILKAN ERROR VALIDASI GLOBAL --}}
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <strong>Whoops! Ada beberapa masalah dengan input Anda:</strong>
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
             <div class="card">
                 <div class="card-body">
@@ -75,29 +44,46 @@
 
                         <div class="mb-3">
                             <label for="judul" class="form-label">Judul</label>
-                            <input type="text" class="form-control" id="judul" name="judul" value="{{ $berita->judul }}" required>
+                            {{-- Gunakan old() dan tampilkan error per field --}}
+                            <input type="text" class="form-control @error('judul') is-invalid @enderror" id="judul" name="judul" value="{{ old('judul', $berita->judul) }}" required>
+                            @error('judul')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="mb-3">
                             <label for="tanggal" class="form-label">Tanggal</label>
-                            <input type="date" class="form-control" id="tanggal" name="tanggal" value="{{ $berita->tanggal }}" required>
+                            {{-- Gunakan old() dan format tanggal dengan benar untuk input type="date" --}}
+                            <input type="date" class="form-control @error('tanggal') is-invalid @enderror" id="tanggal" name="tanggal" value="{{ old('tanggal', $berita->tanggal ? \Carbon\Carbon::parse($berita->tanggal)->format('Y-m-d') : '') }}" required>
+                            @error('tanggal')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="mb-3">
                             <label for="gambar" class="form-label">Gambar</label>
-                            <input type="file" class="form-control" id="gambar" name="gambar">
-                            @if($berita->gambar)
-                                <img src="{{ asset('storage/' . $berita->gambar) }}" alt="{{ $berita->judul }}" width="100">
+                            <input type="file" class="form-control @error('gambar') is-invalid @enderror" id="gambar" name="gambar">
+                            @if($berita->gambar && !$errors->has('gambar')) {{-- Hanya tampilkan gambar lama jika tidak ada error upload baru --}}
+                                <div class="mt-2">
+                                    <p class="mb-1">Gambar saat ini:</p>
+                                    <img src="{{ asset('storage/' . $berita->gambar) }}" alt="{{ $berita->judul }}" width="150" class="img-thumbnail">
+                                </div>
                             @endif
+                            @error('gambar')
+                                <div class="invalid-feedback d-block">{{ $message }}</div> {{-- d-block agar tampil untuk input file --}}
+                            @enderror
                         </div>
 
                         <div class="mb-3">
                             <label for="deskripsi" class="form-label">Deskripsi</label>
-                            <textarea class="form-control" id="deskripsi" name="deskripsi" rows="3">{{ $berita->deskripsi }}</textarea>
+                            <textarea class="form-control @error('deskripsi') is-invalid @enderror" id="deskripsi" name="deskripsi" rows="5" required>{{ old('deskripsi', $berita->deskripsi) }}</textarea>
+                            @error('deskripsi')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <button type="submit" class="btn btn-primary">Update</button>
-                        <a href="{{ route('admin.beritas.index') }}" class="btn btn-secondary">Batal</a>
+                        <a href="{{ route('admin.beritas.index') }}" class="btn btn-secondary">Cancel</a>
                     </form>
                 </div>
             </div>

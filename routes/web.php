@@ -14,8 +14,9 @@ use App\Http\Controllers\TeachingAssistantController; // Tambahkan ini
 use App\Http\Controllers\AlumniController; // Tambahkan ini
 use App\Http\Controllers\ApaKataAlumniController;
 use App\Http\Controllers\KeuanganController;
-use App\Http\Controllers\GuestController;
-
+use App\Http\Controllers\Admin\KategoriGaleriController;
+use App\Http\Controllers\AboutUsController;
+use App\Http\Controllers\SejarahController;
 
 
 /*
@@ -29,20 +30,62 @@ use App\Http\Controllers\GuestController;
 */
 
 // Authentication Routes (Guest Only)
-Route::group(['middleware' => 'guest'], function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('showLogin');
     Route::post('/login', [AuthController::class, 'login'])->name('login');
 
     Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('showRegister');
     Route::post('/register', [AuthController::class, 'register'])->name('register');
-});
+
+    Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
+
+    // Struktur Organisasi Routes (Public)
+    Route::get('/struktur-organisasi', [StrukturOrganisasiController::class, 'showPublic'])->name('struktur-organisasi.public');
+
+    // Agenda Routes (Public)
+    Route::get('/agendas', [AgendaController::class, 'listPublic'])->name('agendas.index');
+    Route::get('/agendas/{agenda}', [AgendaController::class, 'showPublic'])->name('agendas.public');
+
+    // Galeri Routes (Public)
+    Route::get('/galeri', [GaleriController::class, 'showPublic'])->name('galeri.index');
+    Route::get('/galeri/kategori/{kategoriSlug}', [GaleriController::class, 'showByCategory'])->name('galeri.byCategory');
+    // Berita Routes (Public)
+    Route::get('/beritas', [BeritaController::class, 'showPublic'])->name('beritas.public');
+    Route::get('/beritas/{berita}', [BeritaController::class, 'show'])->name('beritas.show');
+
+    // Visi Misi Routes (Public)
+    Route::get('/visi-misi', [VisiMisiController::class, 'indexPublic'])->name('visi_misi.public');
+
+    // Rute Dosen untuk Public
+    Route::get('/dosen', [DosenController::class, 'showPublic'])->name('dosen.showPublic');
+
+    Route::get('/dosen/{dosen}', [DosenController::class, 'showPublicDetail'])->name('dosen.showPublicDetail');
+
+    Route::get('/about_us', [AboutUsController::class, 'showPublic'])->name('about_us.showPublic');
+    Route::get('/about_us/{about_us}', [AboutUsController::class, 'showDetail'])->name('about_us.showDetail');
+
+
+    Route::get('/sejarah', [SejarahController::class, 'showPublic'])->name('sejarah.showPublic');
+
+    // Alumni Routes (Public)
+    Route::get('/alumni/{alumni}', [AlumniController::class, 'showPublicDetail'])->name('alumni.showPublicDetail');
+    Route::get('/alumni', [AlumniController::class, 'indexPublic'])->name('alumni.indexPublic');
+    // Teaching Assistant Routes (Public)
+    Route::get('/teaching-assistants/{teachingAssistant}', [TeachingAssistantController::class, 'showPublicDetail'])->name('teaching_assistants.showPublicDetail');
+    Route::get('/teaching-assistants', [TeachingAssistantController::class, 'indexPublic'])->name('teaching_assistants.indexPublic');
+    // Apa kata alumni
+    Route::get('/apa-kata-alumni', [ApaKataAlumniController::class, 'indexPublic'])->name('apa_kata_alumni.index');
+    Route::get('/apa-kata-alumni/{id}', [ApaKataAlumniController::class, 'showPublic'])->name('apa_kata_alumni.show');
+    // Keuangan
+    Route::get('/laporan-keuangan', [KeuanganController::class, 'indexPublic'])->name('keuangan.index')->middleware('auth');
+
+    // Detail
+    Route::get('/dosen/{id}', [DosenController::class, 'showDetail'])->name('dosen.show');
+    Route::get('/teaching_assistans/{id}', [TeachingAssistantController::class, 'showPublicDetail'])->name('teaching_assistants.show');
+    // Route::get('/alumni/{id}', [AlumniController::class, 'showDetail'])->name('alumni.show');
+
 
 //Route utama dialihkan ke login jika belum login
-// Route::get('/', function () {
-//     return redirect()->route('showLogin');
-// });
 
-Route::get('/', [GuestController::class, 'index']);
 
 
 Route::get('/feedback/{feedback}/edit', [FeedbackController::class, 'edit'])->name('feedback.edit')->middleware('auth');
@@ -55,41 +98,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+});
 
-    // Halaman utama (Public)
-    Route::get('/welcome', [WelcomeController::class, 'index'])->name('welcome');
-
-    // Struktur Organisasi Routes (Public)
-    Route::get('/struktur-organisasi', [StrukturOrganisasiController::class, 'showPublic'])->name('struktur-organisasi.public');
-
-    // Agenda Routes (Public)
-    Route::get('/agendas', [AgendaController::class, 'listPublic'])->name('agendas.index');
-    Route::get('/agendas/{agenda}', [AgendaController::class, 'showPublic'])->name('agendas.public');
-
-    // Galeri Routes (Public)
-    Route::get('/galeri', [GaleriController::class, 'showPublic'])->name('galeri.index');
-
-    // Berita Routes (Public)
-    Route::get('/beritas', [BeritaController::class, 'showPublic'])->name('beritas.public');
-    Route::get('/beritas/{berita}', [BeritaController::class, 'show'])->name('beritas.show');
-
-    // Visi Misi Routes (Public)
-    Route::get('/visi-misi', [VisiMisiController::class, 'indexPublic'])->name('visi_misi.public');
-
-    // Rute Dosen untuk Public
-    Route::get('/dosen', [DosenController::class, 'showPublic'])->name('dosen.showPublic');
-
-    // Alumni Routes (Public)
-    Route::get('/alumni/{alumni}/public', [AlumniController::class, 'showPublic'])->name('alumni.showPublic');
-
-    // Teaching Assistant Routes (Public)
-    Route::get('/teaching-assistants/{teaching_assistant}/public', [TeachingAssistantController::class, 'showPublic'])->name('teaching_assistants.showPublic');
-
-    // Apa kata alumni
-    Route::get('/apa-kata-alumni', [ApaKataAlumniController::class, 'indexPublic'])->name('apa_kata_alumni.index');
-
-    // Keuangan
-    Route::get('/keuangan', [KeuanganController::class, 'indexPublic'])->name('keuangan.index');
 
 
     // Admin Routes (Authenticated Admins Only)
@@ -100,6 +110,7 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::get('/feedback', [FeedbackController::class, 'index'])->name('admin.feedback.index');
         Route::delete('/feedback/{feedback}', [FeedbackController::class, 'destroyByAdmin'])->name('admin.feedback.destroy');
+        Route::get('/berita/{berita}', [BeritaAdminController::class, 'show'])->name('berita.show');
 
         // Struktur Organisasi Routes (Admin)
         Route::group(['prefix' => 'struktur-organisasi'], function () {
@@ -143,6 +154,26 @@ Route::group(['middleware' => 'auth'], function () {
             Route::put('/{galeri}', [GaleriController::class, 'update'])->name('admin.galeri.update');
             Route::delete('/{galeri}', [GaleriController::class, 'destroy'])->name('admin.galeri.destroy');
         });
+
+        Route::group(['prefix' => 'galeri-kategori'], function () { // Menggunakan '-' untuk URI lebih umum
+        Route::get('/', [KategoriGaleriController::class, 'index'])->name('admin.galeri-kategori.index');
+        Route::get('/create', [KategoriGaleriController::class, 'create'])->name('admin.galeri-kategori.create');
+        Route::post('/', [KategoriGaleriController::class, 'store'])->name('admin.galeri-kategori.store');
+
+        // Gunakan parameter yang lebih deskriptif seperti {kategoriGaleri} atau {kategori_galeri}
+        // Jika Anda menggunakan SLUG untuk route model binding di model KategoriGaleri:
+        Route::get('/{kategoriGaleri:slug}', [KategoriGaleriController::class, 'show'])->name('admin.galeri-kategori.show');
+        Route::get('/{kategoriGaleri:slug}/edit', [KategoriGaleriController::class, 'edit'])->name('admin.galeri-kategori.edit'); // Perbaiki nama route ini
+        Route::put('/{kategoriGaleri:slug}', [KategoriGaleriController::class, 'update'])->name('admin.galeri-kategori.update');
+        Route::delete('/{kategoriGaleri:slug}', [KategoriGaleriController::class, 'destroy'])->name('admin.galeri-kategori.destroy');
+
+        // Jika Anda menggunakan ID untuk route model binding (default):
+        // Route::get('/{kategoriGaleri}', [KategoriGaleriController::class, 'show'])->name('galeri-kategori.show');
+        // Route::get('/{kategoriGaleri}/edit', [KategoriGaleriController::class, 'edit'])->name('galeri-kategori.edit');
+        // Route::put('/{kategoriGaleri}', [KategoriGaleriController::class, 'update'])->name('galeri-kategori.update');
+        // Route::delete('/{kategoriGaleri}', [KategoriGaleriController::class, 'destroy'])->name('galeri-kategori.destroy');
+    });
+
 
         // Visi Misi Routes (Admin)
         Route::prefix('visi_misi')->group(function () {
@@ -208,4 +239,3 @@ Route::group(['middleware' => 'auth'], function () {
             Route::delete('/{keuangan}', [KeuanganController::class, 'destroy'])->name('admin.keuangan.destroy');
         });
     });
-});

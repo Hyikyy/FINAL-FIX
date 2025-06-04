@@ -1,5 +1,5 @@
 <!-- <header class="app-header">
-    <nav class="navbar navbar-expand-lg navbar-light">
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #444547; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); border-bottom: 1px solid #ccc;">
         <ul class="navbar-nav">
             <li class="nav-item d-block d-xl-none">
                 <a class="nav-link sidebartoggler " id="headerCollapse" href="javascript:void(0)">
@@ -7,39 +7,13 @@
                 </a>
             </li>
         </ul>
-        <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
-            <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
-                <a href="https://www.wrappixel.com/templates/materialm-admin-dashboard-template/?ref=376"
-                    target="_blank" class="btn btn-primary">Check Pro Template</a>
-                <li class="nav-item dropdown">
-                    <a class="nav-link " href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        <img src="{{ asset('admin/assets/images/profile/user-1.jpg') }}" alt="" width="35"
-                            height="35" class="rounded-circle">
+        <div class="navbar-collapse justify-content-start px-0" id="navbarNav">
+            <ul class="navbar-nav flex-row align-items-center">
+                Logo HIMATIF -->
+                <!-- <li class="nav-item">
+                    <a class="navbar-brand" href="/admin/dashboard">
+                        <img src="{{ asset('assets/img/himatif/himatif.jpg') }}" width="50" alt="Logo HIMATIF">
                     </a>
-                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
-                        <div class="message-body">
-                            <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
-                                <i class="ti ti-user fs-6"></i>
-                                <p class="mb-0 fs-3">My Profile</p>
-                            </a>
-                            <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
-                                <i class="ti ti-mail fs-6"></i>
-                                <p class="mb-0 fs-3">My Account</p>
-                            </a>
-                            <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
-                                <i class="ti ti-list-check fs-6"></i>
-                                <p class="mb-0 fs-3">My Task</p>
-                            </a>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST">
-                                @csrf
-                                <button type="submit" class="dropdown-item d-flex align-items-center gap-2">
-                                    <i class="ti ti-logout fs-6"></i>
-                                    <span class="mb-0 fs-3">Logout</span>
-                                </button>
-                            </form>
-                        </div>
-                    </div>
                 </li>
             </ul>
         </div>

@@ -1,124 +1,192 @@
-  <!doctype html>
-  <html lang="en">
-
-  <head>
+<!doctype html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
     @include('admin.head')
-    <title>Daftar Galeri</title>
-  </head>
+    <title>Manajemen Item Galeri - Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body { font-family: 'Nunito', sans-serif; background-color: #f8f9fc; }
+        .page-wrapper { display: flex; min-height: 100vh; }
+        .body-wrapper { flex-grow: 1; display: flex; flex-direction: column; }
+        .container-fluid { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+        .card { border: 0; margin-bottom: 1.5rem; }
+        .card-header { background-color: #fff; border-bottom: 1px solid #e3e6f0; padding: .75rem 1.25rem; }
+        .text-gray-800 { color: #5a5c69 !important; }
+        .font-weight-bold { font-weight: 700 !important; }
+        .text-primary { color: #4e73df !important; }
+        .shadow-sm { box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important; }
+        .btn-icon-split .icon { background: rgba(0,0,0,0.15); display: inline-block; padding: .375rem .75rem; }
+        .btn-icon-split .text { padding: .375rem .75rem; display: inline-block; }
+        .table th, .table td { vertical-align: middle; }
+        .img-thumbnail-custom { width: 100px; height: 75px; object-fit: cover; }
 
-  <body>
-    <!--  Body Wrapper -->
-    <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
-      data-sidebar-position="fixed" data-header-position="fixed">
 
-      <!--  App Topstrip -->
-      <div class="app-topstrip bg-dark py-6 px-3 w-100 d-lg-flex align-items-center justify-content-between">
-        <div class="d-flex align-items-center justify-content-center gap-5 mb-2 mb-lg-0">
-          </a>
+    /* Styling untuk tombol aksi agar sebaris dan rapi */
+    .action-buttons .btn,
+    .action-buttons form {
+        display: inline-block; /* Membuat form juga inline */
+        margin-right: 5px;   /* Jarak antar tombol/form */
+        margin-bottom: 5px;  /* Jarak jika tombol wrap ke baris baru di layar kecil */
+        vertical-align: middle; /* Menyamakan alignment vertikal tombol */
+    }
 
-          <div class="d-none d-xl-flex align-items-center gap-3">
-              <i class="ti ti-lifebuoy fs-5"></i>
-            </a>
-              <i class="ti ti-gift fs-5"></i>
-            </a>
-          </div>
-        </div>
+    /* Menghilangkan margin kanan pada elemen terakhir */
+    .action-buttons .btn:last-child,
+    .action-buttons form:last-child {
+        margin-right: 0;
+    }
 
-        <div class="d-lg-flex align-items-center gap-2">
-          <div class="d-flex align-items-center justify-content-center gap-2">
-            <div class="dropdown d-flex">
-                data-bs-toggle="dropdown" aria-expanded="false">
-              </a>
-              <div class="-" aria-labelledby="drop3">
-                <div class="message-body">
-                  <a target="_blank"
-                    class="dropdown-item d-flex align-items-center gap-1">
-                  </a>
-                  </a>
+    /* Opsional: Jika ingin tombol memiliki lebar minimum agar lebih seragam */
+    /*
+    .action-buttons .btn {
+        min-width: 70px;
+        text-align: center;
+    }
+    */
+    </style>
+</head>
+<body>
+    <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed">
+        @include('admin.sidebar')
+        <div class="body-wrapper">
+            @include('admin.header')
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1>Gallery Item Management</h1>
+                    <a href="{{ route('admin.galeri.create') }}" class="btn btn-primary btn-icon-split btn-sm shadow-sm">
+                        <span class="text">Create Item Galeri</span>
+                    </a>
                 </div>
-              </div>
+
+                @if (session('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
+                {{-- Filter --}}
+                {{-- Filter --}}
+<div class="card mb-4">
+    <div class="card-header">Filter Galeri</div>
+    <div class="card-body">
+        <form method="GET" action="{{ route('admin.galeri.index') }}" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label for="search" class="form-label">Cari Judul:</label>
+                {{-- MENGGUNAKAN HELPER request() --}}
+                <input type="text" name="search" id="search" class="form-control form-control-sm" value="{{ request('search') }}" placeholder="Masukkan judul...">
             </div>
-            <div class="dropdown d-flex">
-              <a class="-" href="javascript:void(0)" id="drop4"
-                data-bs-toggle="dropdown" aria-expanded="false">
-              </a>
-              <div class="-" aria-labelledby="drop4">
-                <div class="message-body">
-                  <a target="_blank"
-                    class="dropdown-item d-flex align-items-center gap-1">
-
-                  </a>
-                </div>
-              </div>
+            <div class="col-md-4">
+                <label for="kategori_filter" class="form-label">Kategori:</label>
+                <select name="kategori_filter" id="kategori_filter" class="form-select form-select-sm">
+                    <option value="">Semua Kategori</option>
+                    @if(isset($kategoris))
+                        @foreach($kategoris as $kategori)
+                            {{-- MENGGUNAKAN HELPER request() --}}
+                            <option value="{{ $kategori->id }}" {{ request('kategori_filter') == $kategori->id ? 'selected' : '' }}>
+                                {{ $kategori->nama_kategori }}
+                            </option>
+                        @endforeach
+                    @endif
+                </select>
             </div>
-          </div>
-        </div>
-      </div>
-      <!-- Sidebar Start -->
-      @include('admin.sidebar')
-      <!--  Sidebar End -->
-      <!--  Main wrapper -->
-      <div class="body-wrapper">
-        <!--  Header Start -->
-        @include('admin.header')
-        <!--  Header End -->
-  <br><br>
-          <!-- Konten Galeri -->
-          <div class="container-fluid">
-              <h1>Daftar Galeri</h1>
-
-              <a href="{{ route('admin.galeri.create') }}" class="btn btn-primary mb-3">Tambah Galeri</a>
-
-              @if(session('success'))
-                  <div class="alert alert-success">
-                      {{ session('success') }}
-                  </div>
-              @endif
-
-              <div class="table-responsive">
-                  <table class="table table-striped">
-                      <thead>
-                          <tr>
-                              <th>Judul</th>
-                              <th>Gambar</th>
-                              <th>Aksi</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          @foreach($galeris as $galeri)
-                              <tr>
-                                  <td>{{ $galeri->judul }}</td>
-                                  <td>
-                                      <img src="{{ asset('storage/' . $galeri->gambar) }}" alt="{{ $galeri->judul }}" width="50">
-                                  </td>
-                                  <td>
-                                      <a href="{{ route('admin.galeri.show', $galeri->id) }}" class="btn btn-sm btn-info">Lihat</a>
-                                      <a href="{{ route('admin.galeri.edit', $galeri->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                                      <form action="{{ route('admin.galeri.destroy', $galeri->id) }}" method="POST" style="display: inline-block;">
-                                          @csrf
-                                          @method('DELETE')
-                                          <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus?')">Hapus</button>
-                                      </form>
-                                  </td>
-                              </tr>
-                          @endforeach
-                      </tbody>
-                  </table>
-              </div>
-          </div>
-          <!-- Akhir Konten Galeri -->
-
-      </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-info btn-sm w-100"><i class="fas fa-filter"></i> Filter</button>
+            </div>
+            <div class="col-md-2">
+                <a href="{{ route('admin.galeri.index') }}" class="btn btn-secondary btn-sm w-100" title="Reset Filter">
+                    <i class="fas fa-sync-alt"></i> Reset
+                </a>
+            </div>
+        </form>
     </div>
+</div>
+
+{{-- ... sisa kode untuk tabel ... --}}
+
+{{-- Pagination --}}
+@if(isset($galeris) && $galeris->hasPages())
+<div class="mt-4 d-flex justify-content-center">
+    {{-- $galeris->appends(request()->query())->links() SUDAH BENAR MENGGUNAKAN request() --}}
+    {{ $galeris->appends(request()->query())->links() }}
+</div>
+@endif
+
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Item Gallery List</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover" id="dataTableGaleri" width="100%" cellspacing="0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Gambar</th>
+                                        <th>Judul</th>
+                                        <th>Kategori</th>
+                                        <th>Oleh</th>
+                                        <th>Tgl Upload</th>
+                                        <th class="text-center" style="width: 18%;">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($galeris as $index => $item) {{-- $galeris dari GaleriController@index --}}
+                                        <tr>
+                                            <td>{{ $galeris->firstItem() + $index }}</td>
+                                            <td>
+                                                @if($item->gambar)
+                                                    <img src="{{ asset('storage/' . $item->gambar) }}" alt="{{ $item->judul }}" class="img-thumbnail-custom">
+                                                @else
+                                                    <span class="text-muted">Tanpa Gambar</span>
+                                                @endif
+                                            </td>
+                                            <td>{{ $item->judul }}</td>
+                                            <td>{{ $item->kategoriGaleri->nama_kategori ?? 'Tidak Berkategori' }}</td>
+                                            <td>{{ $item->user->name ?? 'N/A' }}</td>
+                                            <td>{{ $item->created_at->translatedFormat('d M Y H:i') }}</td>
+                                            <td class="action-buttons">
+                                                <a href="{{ route('admin.galeri.show', $item->id) }}" class="btn btn-info btn-sm" title="Lihat Detail">
+                                                See
+                                                </a>
+                                                <a href="{{ route('admin.galeri.edit', $item->id) }}" class="btn btn-warning btn-sm" title="Edit">
+                                                 Edit
+                                                </a>
+                                                <form action="{{ route('admin.galeri.destroy', $item->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus item galeri \'{{ $item->judul }}\'?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger btn-sm" title="Hapus">
+                                                    Delete
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="7" class="text-center">Belum ada item galeri.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                        {{-- Pagination Links --}}
+                        @if(isset($galeris) && $galeris->hasPages())
+                        <div class="mt-4 d-flex justify-content-center">
+                            {{ $galeris->appends(request()->query())->links() }}
+                        </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            <footer class="footer text-center py-3 bg-light mt-auto">
+                <div class="container-fluid"><span class="text-muted">Hak Cipta © {{ date('Y') }} HIMATIF.</span></div>
+            </footer>
+        </div>
+    </div>
+    {{-- Script JS dasar admin --}}
     <script src="{{ asset('admin/assets/libs/jquery/dist/jquery.min.js') }}"></script>
     <script src="{{ asset('admin/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('admin/assets/js/sidebarmenu.js') }}"></script>
-    <script src="{{ asset('admin/assets/js/app.min.js') }}"></script>
-    <script src="{{ asset('admin/assets/libs/apexcharts/dist/apexcharts.min.js') }}"></script>
-    <script src="{{ asset('admin/assets/libs/simplebar/dist/simplebar.js') }}"></script>
-    <script src="{{ asset('admin/assets/js/dashboard.js') }}"></script>
-    <!-- solar icons -->
-    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
-  </body>
-
-  </html>
+    @if(file_exists(public_path('admin/assets/js/sidebarmenu.js'))) <script src="{{ asset('admin/assets/js/sidebarmenu.js') }}"></script> @endif
+    @if(file_exists(public_path('admin/assets/js/app.min.js'))) <script src="{{ asset('admin/assets/js/app.min.js') }}"></script> @endif
+</body>
+</html>

@@ -23,5 +23,5 @@ class Berita extends Model
         return $this->hasMany(Feedback::class)->orderBy('tanggal', 'desc'); // Ambil feedback dan urutkan dari terbaru
     }
 
-    
+
 }

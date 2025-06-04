@@ -8,24 +8,11 @@
 
   <main id="main">
 
-    <!-- ======= Breadcrumbs ======= -->
-    <div class="breadcrumbs">
-      <div class="container">
-        <div class="d-flex justify-content-between align-items-center">
-          <h2>Agenda Kegiatan</h2>
-          <ol>
-            <li><a href="{{ route('welcome') }}">Beranda</a></li>
-            <li>Agenda</li>
-          </ol>
-        </div>
-      </div>
-    </div><!-- End Breadcrumbs -->
-
     <!-- ======= Agenda Section ======= -->
-    <section id="agenda" class="agenda">
+    <section id="agenda" class="agenda" style="margin-top: 50px; margin-bottom: 0px;">
       <div class="container" data-aos="fade-up">
 
-        <div class="section-title">
+        <div class="section-title" style="margin-top: 70px;">
           <h2>Agenda Terbaru</h2>
           <p>Ikuti terus agenda kegiatan HIMATIF untuk mendapatkan informasi terkini.</p>
         </div>
@@ -56,7 +43,7 @@
         </div>
 
         <div class="mt-5 d-flex justify-content-center">
-            
+
         </div>
 
       </div>

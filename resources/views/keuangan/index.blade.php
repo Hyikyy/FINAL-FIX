@@ -1,33 +1,20 @@
 @extends('layouts.app')
 
 @section('title', 'Keuangan | Website Kami')
-@section('description', 'Informasi keuangan organisasi (ringkasan).')
+@section('description', 'Informasi keuangan organisasi Himatif.')
 @section('keywords', 'keuangan, laporan keuangan, organisasi, pemasukan, pengeluaran, diagram keuangan')
 
 @section('content')
 
   <main id="main">
 
-    <!-- ======= Breadcrumbs ======= -->
-    <div class="breadcrumbs">
-      <div class="container">
-        <div class="d-flex justify-content-between align-items-center">
-          <h2>Keuangan</h2>
-          <ol>
-            <li><a href="{{ route('welcome') }}">Beranda</a></li>
-            <li>Keuangan</li>
-          </ol>
-        </div>
-      </div>
-    </div><!-- End Breadcrumbs -->
-
     <!-- ======= Keuangan Section ======= -->
-    <section id="keuangan" class="inner-page">
+    <section id="keuangan" class="inner-page" style="margin-top: 70px; margin-bottom: 10px;">
       <div class="container" data-aos="fade-up">
 
-        <div class="section-header">
-          <h2 class="text-center">Ringkasan Keuangan Organisasi</h2>
-          <p class="text-center">Sekilas tentang kesehatan finansial kita.</p>
+        <div class="section-header" style="margin-top: 70px; margin-bottom: 10px;">
+          <h2 class="text-center fw-bold" style="color: black;">Ringkasan Keuangan Organisasi</h2>
+          <p class="text-center">Sekilas tentang kesehatan finansial HIMATIF.</p>
         </div>
 
         <div class="row justify-content-center">
@@ -35,7 +22,7 @@
           <div class="col-lg-6">
             <div class="card shadow mb-4">
               <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Data Pemasukan&Pengeluaran</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Data Pemasukan & Pengeluaran</h6>
               </div>
               <div class="card-body">
                 <canvas id="keuanganChart"></canvas>
@@ -89,7 +76,7 @@
                     </div>
                     <div class="row no-gutters align-items-center">
                       <div class="col-auto">
-                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">Rp {{ number_format($totalPemasukan - $totalPengeluaran, 2, ',', '.') }}</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">Rp {{ number_format($totalPemasukan - $totalPengeluaran, 2, ',', '.') }}</div>
                       </div>
                     </div>
                   </div>
@@ -100,6 +87,60 @@
               </div>
             </div>
           </div>
+
+          <!-- Tampilkan Saldo HIMATIF -->
+          <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card shadow border-left-primary h-100 py-2">
+              <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                      Saldo HIMATIF
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">Rp {{ number_format($totalSaldo, 2, ',', '.') }}</div>
+                  </div>
+                  <div class="col-auto">
+                    <i class="fas fa-coins fa-2x text-gray-300"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- End Tampilkan Saldo HIMATIF -->
+
+          <!-- Ringkasan Bulanan -->
+          <div class="col-lg-12">
+            <div class="card shadow mb-4">
+              <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Ringkasan Bulanan</h6>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-bordered" width="100%" cellspacing="0">
+                    <thead>
+                      <tr>
+                        <th>Bulan</th>
+                        <th>Pemasukan</th>
+                        <th>Pengeluaran</th>
+                        <th>Surplus/Defisit</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @foreach($ringkasanBulanan as $bulan => $data)
+                        <tr>
+                          <td>{{ $data['bulan'] }}</td>
+                          <td>Rp {{ number_format($data['total_pemasukan'], 2, ',', '.') }}</td>
+                          <td>Rp {{ number_format($data['total_pengeluaran'], 2, ',', '.') }}</td>
+                          <td>Rp {{ number_format($data['total_pemasukan'] - $data['total_pengeluaran'], 2, ',', '.') }}</td>
+                        </tr>
+                      @endforeach
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- End Ringkasan Bulanan -->
 
           <div class="col-lg-8">
             <p class="text-center text-muted">

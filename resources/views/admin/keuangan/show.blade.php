@@ -3,7 +3,7 @@
 
 <head>
     @include('admin.head')
-    <title>Detail Data Keuangan</title>
+    <title>Financial Transaction Details</title> {{-- Judul disesuaikan --}}
 </head>
 
 <body>
@@ -11,50 +11,6 @@
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
       data-sidebar-position="fixed" data-header-position="fixed">
 
-      <!--  App Topstrip -->
-      <div class="app-topstrip bg-dark py-6 px-3 w-100 d-lg-flex align-items-center justify-content-between">
-        <div class="d-flex align-items-center justify-content-center gap-5 mb-2 mb-lg-0">
-          </a>
-
-          <div class="d-none d-xl-flex align-items-center gap-3">
-              <i class="ti ti-lifebuoy fs-5"></i>
-            </a>
-              <i class="ti ti-gift fs-5"></i>
-            </a>
-          </div>
-        </div>
-
-        <div class="d-lg-flex align-items-center gap-2">
-          <div class="d-flex align-items-center justify-content-center gap-2">
-            <div class="dropdown d-flex">
-                data-bs-toggle="dropdown" aria-expanded="false">
-              </a>
-              <div class="-" aria-labelledby="drop3">
-                <div class="message-body">
-                  <a target="_blank"
-                    class="dropdown-item d-flex align-items-center gap-1">
-                  </a>
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div class="dropdown d-flex">
-              <a class="-" href="javascript:void(0)" id="drop4"
-                data-bs-toggle="dropdown" aria-expanded="false">
-              </a>
-              <div class="-" aria-labelledby="drop4">
-                <div class="message-body">
-                  <a target="_blank"
-                    class="dropdown-item d-flex align-items-center gap-1">
-
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-      </div>
         <!-- Sidebar Start -->
         @include('admin.sidebar')
         <!--  Sidebar End -->
@@ -66,16 +22,42 @@
             <br><br>
             <!-- Konten Keuangan -->
             <div class="container-fluid">
-                <h1>Detail Data Keuangan</h1>
+                <h1>Financial Transaction Details</h1>
 
                 <div class="card">
+                    <div class="card-header">
+                        Detail Transaksi ID: #{{ $keuangan->id }}
+                    </div>
                     <div class="card-body">
-                        <h5 class="card-title">Pemasukan: {{ number_format($keuangan->pemasukan, 2, ',', '.') }}</h5>
-                        <p class="card-text"><strong>Pengeluaran:</strong> {{ number_format($keuangan->pengeluaran, 2, ',', '.') }}</p>
-                        <p class="card-text"><strong>Saldo:</strong> {{ number_format($keuangan->saldo, 2, ',', '.') }}</p>
-                        <p class="card-text"><strong>Laporan:</strong> {{ $keuangan->laporan }}</p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Tanggal Transaksi:</strong> {{ $keuangan->tanggal ? \Carbon\Carbon::parse($keuangan->tanggal)->translatedFormat('l, d F Y') : 'N/A' }}</p>
+                                <p><strong>Deskripsi:</strong> {{ $keuangan->deskripsi }}</p>
+                                <p><strong>Jenis Transaksi:</strong>
+                                    @if($keuangan->jenis == 'pemasukan')
+                                        <span class="badge bg-success text-capitalize">{{ $keuangan->jenis }}</span>
+                                    @elseif($keuangan->jenis == 'pengeluaran')
+                                        <span class="badge bg-danger text-capitalize">{{ $keuangan->jenis }}</span>
+                                    @else
+                                        <span class="badge bg-secondary text-capitalize">{{ $keuangan->jenis ?? 'Tidak Diketahui' }}</span>
+                                    @endif
+                                </p>
+                                <p><strong>Jumlah:</strong> Rp {{ number_format($keuangan->jumlah, 0, ',', '.') }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Dicatat Oleh:</strong> {{ $keuangan->user->name ?? 'Sistem' }}</p>
+                                <p><strong>Dibuat Pada:</strong> {{ $keuangan->created_at ? $keuangan->created_at->translatedFormat('l, d F Y H:i:s') : 'N/A' }}</p>
+                                <p><strong>Diperbarui Pada:</strong> {{ $keuangan->updated_at ? $keuangan->updated_at->translatedFormat('l, d F Y H:i:s') : 'N/A' }}</p>
+                            </div>
+                        </div>
 
-                        <a href="{{ route('admin.keuangan.index') }}" class="btn btn-secondary">Kembali</a>
+                        <hr>
+                        <a href="{{ route('admin.keuangan.edit', $keuangan->id) }}" class="btn btn-warning">
+                         Edit
+                        </a>
+                        <a href="{{ route('admin.keuangan.index') }}" class="btn btn-secondary">
+                         Back to List
+                        </a>
                     </div>
                 </div>
             </div>
@@ -83,6 +65,7 @@
 
         </div>
     </div>
+    {{-- Script assets --}}
     <script src="{{ asset('admin/assets/libs/jquery/dist/jquery.min.js') }}"></script>
     <script src="{{ asset('admin/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('admin/assets/js/sidebarmenu.js') }}"></script>
@@ -90,8 +73,9 @@
     <script src="{{ asset('admin/assets/libs/apexcharts/dist/apexcharts.min.js') }}"></script>
     <script src="{{ asset('admin/assets/libs/simplebar/dist/simplebar.js') }}"></script>
     <script src="{{ asset('admin/assets/js/dashboard.js') }}"></script>
-    <!-- solar icons -->
     <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+    {{-- Pastikan Anda menyertakan Font Awesome jika menggunakan ikon seperti fas fa-edit --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </body>
 
 </html>

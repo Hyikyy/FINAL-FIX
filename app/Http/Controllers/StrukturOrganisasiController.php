@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\StrukturOrganisasi;
+use App\Models\VisiMisi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -14,6 +15,7 @@ class StrukturOrganisasiController extends Controller
     public function index()
     {
         $strukturOrganisasi = StrukturOrganisasi::all();
+
         return view('admin.struktur_organisasi.index', compact('strukturOrganisasi')); // Admin view
     }
 
@@ -124,6 +126,10 @@ class StrukturOrganisasiController extends Controller
     public function showPublic()
     {
         $strukturOrganisasi = StrukturOrganisasi::all();
-        return view('struktur_organisasi.index', compact('strukturOrganisasi')); // Public view
+        $visiMisi = VisiMisi::all();
+        return view('struktur_organisasi.index', [
+            'strukturOrganisasi' => $strukturOrganisasi,
+            'visiMisi' => $visiMisi // Kirim data visiMisi ke view
+        ]); // Public view
     }
 }

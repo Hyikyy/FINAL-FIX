@@ -2,8 +2,19 @@
 <html lang="en">
 
 <head>
-  @include('admin.head')
-  <title>Detail Visi Misi</title>
+    @include('admin.head')
+    <title>Vision & Mission Details </title>
+    <style>
+        /* Style untuk paragraf visi agar lebih rapi */
+        .vision-paragraph-detail, .mission-paragraph-detail {
+            padding-left: 5px; /* Sedikit indentasi jika diinginkan, atau hapus jika tidak perlu */
+            line-height: 1.6;
+        }
+        /* Jika misi ingin tetap sebagai daftar bernomor, style ini tidak perlu untuk misi */
+        .mission-list ol {
+            margin-bottom: 0; /* Menghilangkan margin bawah default dari ol jika ada */
+        }
+    </style>
 </head>
 
 <body>
@@ -11,49 +22,6 @@
   <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
       data-sidebar-position="fixed" data-header-position="fixed">
 
-      <!--  App Topstrip -->
-      <div class="app-topstrip bg-dark py-6 px-3 w-100 d-lg-flex align-items-center justify-content-between">
-        <div class="d-flex align-items-center justify-content-center gap-5 mb-2 mb-lg-0">
-          </a>
-
-          <div class="d-none d-xl-flex align-items-center gap-3">
-              <i class="ti ti-lifebuoy fs-5"></i>
-            </a>
-              <i class="ti ti-gift fs-5"></i>
-            </a>
-          </div>
-        </div>
-
-        <div class="d-lg-flex align-items-center gap-2">
-          <div class="d-flex align-items-center justify-content-center gap-2">
-            <div class="dropdown d-flex">
-                data-bs-toggle="dropdown" aria-expanded="false">
-              </a>
-              <div class="-" aria-labelledby="drop3">
-                <div class="message-body">
-                  <a target="_blank"
-                    class="dropdown-item d-flex align-items-center gap-1">
-                  </a>
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div class="dropdown d-flex">
-              <a class="-" href="javascript:void(0)" id="drop4"
-                data-bs-toggle="dropdown" aria-expanded="false">
-              </a>
-              <div class="-" aria-labelledby="drop4">
-                <div class="message-body">
-                  <a target="_blank"
-                    class="dropdown-item d-flex align-items-center gap-1">
-
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     <!-- Sidebar Start -->
     @include('admin.sidebar')
     <!--  Sidebar End -->
@@ -71,15 +39,40 @@
                 <div class="card-body">
                     <div class="mb-3">
                         <strong>Visi:</strong>
-                        <p>{{ $visiMisi->visi }}</p>
+                        {{-- AWAL PERUBAHAN UNTUK VISI --}}
+                        <div class="vision-paragraph-detail" style="margin-top: 5px;">
+                            {!! nl2br(e($visiMisi->visi)) !!}
+                        </div>
+                        {{-- AKHIR PERUBAHAN UNTUK VISI --}}
                     </div>
+
+                    <hr> {{-- Tambahkan pemisah jika diinginkan --}}
 
                     <div class="mb-3">
                         <strong>Misi:</strong>
-                        <p>{{ $visiMisi->misi }}</p>
+                        {{-- Misi tetap menggunakan daftar bernomor seperti sebelumnya --}}
+                        <div class="mission-list" style="margin-top: 5px;">
+                            <ol style="list-style-type: decimal; padding-left: 20px; margin-bottom: 0;">
+                                @php
+                                    $misi = $visiMisi->misi;
+                                    $misi = str_replace(["\r\n", "\r"], "\n", $misi);
+                                    $misiLines = explode("\n", $misi);
+                                @endphp
+                                @foreach($misiLines as $misiLine)
+                                    @php
+                                        $misiLine = trim($misiLine);
+                                    @endphp
+                                    @if(!empty($misiLine))
+                                        <li>{{ $misiLine }}</li>
+                                    @endif
+                                @endforeach
+                            </ol>
+                        </div>
                     </div>
 
-                    <a href="{{ route('admin.visi_misi.index') }}" class="btn btn-secondary">Kembali</a>
+                    <hr> {{-- Tambahkan pemisah jika diinginkan --}}
+
+                    <a href="{{ route('admin.visi_misi.index') }}" class="btn btn-secondary mt-2">Back</a>
                 </div>
             </div>
         </div>

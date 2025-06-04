@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Carbon\Carbon;
 
 class FeedbackController extends Controller
 {
@@ -23,7 +24,6 @@ class FeedbackController extends Controller
         $request->validate([
             'berita_id' => 'required|exists:beritas,id',
             'isi' => 'required|string',
-            'tanggal' => 'required|date'
         ]);
 
         // Cek apakah user sudah memberikan feedback untuk berita ini
@@ -39,6 +39,10 @@ class FeedbackController extends Controller
         //Tambahkan user_id dan nama
         $data['user_id'] = Auth::id(); //ambil id user
         $data['nama'] = Auth::user()->name; //ambil nama user
+
+        // Tambahkan tanggal saat ini (hanya tanggal)
+        $data['tanggal'] = Carbon::now()->toDateString(); // Format ke YYYY-MM-DD
+
         Feedback::create($data);
 
         return back()->with('success', 'Feedback berhasil ditambahkan!');
@@ -57,10 +61,9 @@ class FeedbackController extends Controller
 
         $request->validate([
             'isi' => 'required|string',
-             'tanggal' => 'required|date'
         ]);
 
-        $feedback->update($request->only('isi','tanggal'));
+        $feedback->update($request->only('isi'));
 
         return back()->with('success', 'Feedback berhasil diupdate!');
     }

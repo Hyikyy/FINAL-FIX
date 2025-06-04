@@ -10,8 +10,9 @@
     <meta name="keywords" content="login, himatif">
 
     <!-- Favicons -->
-    <link href="{{ asset('assets/img/favicon.png') }}" rel="icon">
-    <link href="{{ asset('assets/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+    <link href="{{ asset('assets\img\data himatif\himatif.jpg') }}" rel="icon" type="image/png">
+    <link href="{{ asset('assets/data himatif/logo.png') }}" rel="apple-touch-icon" type="image/png">
+
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -90,10 +91,18 @@
             @endif
 
             <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" name="email" id="email" class="form-control" value="{{ old('email') }}"
+                <label for="nim">NIM</label>
+                <input type="nim" name="nim" id="nim" class="form-control" value="{{ old('nim') }}"
                     required>
             </div>
+
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="username" name="username" id="username" class="form-control" value="{{ old('username') }}"
+                    required>
+            </div>
+
 
             <div class="form-group">
                 <label for="password">Password</label>
@@ -102,6 +111,10 @@
 
             <button type="submit" class="btn btn-primary">Login</button>
         </form>
+
+        <p class="mt-3 text-center" style="color:#000000">
+            Belum punya akun? <a href="{{ route('showRegister') }}">Register di sini</a>
+        </p>
     </div>
 
     <!-- Vendor JS Files -->

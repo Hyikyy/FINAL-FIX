@@ -39,8 +39,8 @@ class ApaKataAlumniController extends Controller
         if ($request->hasFile('gambar')) {
             $gambar = $request->file('gambar');
             $namaGambar = time() . '.' . $gambar->getClientOriginalExtension();
-            $pathGambar = $gambar->storeAs('alumni', $namaGambar, 'public'); // Simpan di storage/app/public/apa_kata_alumni
-            $data['gambar'] = $pathGambar;
+            $pathGambar = $gambar->storeAs('apa_kata_alumni', $namaGambar, 'public'); // Simpan di storage/app/public/apa_kata_alumni
+            $data['gambar'] = $namaGambar; // Simpan nama file saja
         }
 
         $data['user_id'] = auth()->user()->id; // Menambahkan user_id berdasarkan user yang sedang login
@@ -54,6 +54,12 @@ class ApaKataAlumniController extends Controller
     public function show(ApaKataAlumni $apaKataAlumni)
     {
         return view('admin.apa_kata_alumni.show', compact('apaKataAlumni'));
+    }
+
+    public function showPublic($id)
+    {
+        $apaKataAlumni = ApaKataAlumni::findOrFail($id); // Atau handle jika tidak ditemukan
+        return view('apa_kata_alumni.show', compact('apaKataAlumni'));
     }
 
     public function edit(ApaKataAlumni $apaKataAlumni)
@@ -75,13 +81,13 @@ class ApaKataAlumniController extends Controller
         if ($request->hasFile('gambar')) {
             // Hapus gambar lama jika ada
             if ($apaKataAlumni->gambar) {
-                Storage::delete('public/' . $apaKataAlumni->gambar);
+                Storage::delete('public/apa_kata_alumni/' . $apaKataAlumni->gambar); // Hapus gambar dari direktori yang benar
             }
 
             $gambar = $request->file('gambar');
             $namaGambar = time() . '.' . $gambar->getClientOriginalExtension();
             $pathGambar = $gambar->storeAs('apa_kata_alumni', $namaGambar, 'public');
-            $data['gambar'] = $pathGambar;
+            $data['gambar'] = $namaGambar; // Simpan nama file saja
         }
 
         $apaKataAlumni->update($data);
@@ -94,7 +100,7 @@ class ApaKataAlumniController extends Controller
     {
         // Hapus gambar terkait jika ada
         if ($apaKataAlumni->gambar) {
-            Storage::delete('public/' . $apaKataAlumni->gambar);
+            Storage::delete('apa_kata_alumni/' . $apaKataAlumni->gambar); // Hapus gambar dari direktori yang benar
         }
 
         $apaKataAlumni->delete();

@@ -7,6 +7,7 @@ use App\Models\Dosen;
 use App\Models\TeachingAssistant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Route;
 
 class DosenController extends Controller
 {
@@ -54,7 +55,7 @@ class DosenController extends Controller
         Dosen::create($data);
 
         return redirect()->route('admin.dosens.index')
-            ->with('success', 'Dosen berhasil ditambahkan.');
+            ->with('success', 'Daftar Dosen berhasil ditambahkan.');
     }
 
     /**
@@ -102,7 +103,7 @@ class DosenController extends Controller
         $dosen->update($data);
 
         return redirect()->route('admin.dosens.index')
-            ->with('success', 'Dosen berhasil diperbarui.');
+            ->with('success', 'Daftar Dosen berhasil diperbarui.');
     }
 
     /**
@@ -118,7 +119,7 @@ class DosenController extends Controller
         $dosen->delete();
 
         return redirect()->route('admin.dosens.index')
-            ->with('success', 'Dosen berhasil dihapus.');
+            ->with('success', 'Daftar Dosen berhasil dihapus.');
     }
 
     /**
@@ -126,9 +127,24 @@ class DosenController extends Controller
      */
     public function showPublic()
     {
-        $alumnis = Alumni::all();
-        $teachingAssistants = TeachingAssistant::all();
+
         $dosens = Dosen::all();
-        return view('dosens.index', compact('dosens', 'teachingAssistants', 'alumnis'));
+        return view('dosens.index', compact('dosens'));
     }
+
+
+         public function showPublicDetail(Dosen $dosen)
+    {
+        // Variabel $alumni sudah otomatis di-inject oleh Laravel
+        // berdasarkan parameter rute (misalnya {alumni}).
+        // Jika Alumni dengan ID/slug yang diberikan tidak ditemukan, Laravel akan
+        // otomatis menampilkan error 404.
+
+        // Anda bisa menambahkan logika di sini jika perlu mengambil data relasi.
+        // Contoh: $alumni->load('riwayatPekerjaan');
+
+        return view('dosens.show', compact('dosen'));
+    }
+
+
 }

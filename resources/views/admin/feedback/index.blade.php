@@ -4,6 +4,31 @@
 <head>
   @include('admin.head')
   <title>Daftar Feedback</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> {{-- Tambahkan Font Awesome jika belum ada global --}}
+  <style>
+    /* Styling untuk tombol aksi agar sebaris dan rapi */
+    .action-buttons .btn,
+    .action-buttons form {
+        display: inline-block; /* Membuat form juga inline */
+        margin-right: 5px;   /* Jarak antar tombol/form */
+        margin-bottom: 5px;  /* Jarak jika tombol wrap ke baris baru di layar kecil */
+        vertical-align: middle; /* Menyamakan alignment vertikal tombol */
+    }
+
+    /* Menghilangkan margin kanan pada elemen terakhir */
+    .action-buttons .btn:last-child,
+    .action-buttons form:last-child {
+        margin-right: 0;
+    }
+
+    /* Opsional: Jika ingin tombol memiliki lebar minimum agar lebih seragam */
+    /*
+    .action-buttons .btn {
+        min-width: 70px;
+        text-align: center;
+    }
+    */
+  </style>
 </head>
 
 <body>
@@ -11,49 +36,6 @@
   <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
       data-sidebar-position="fixed" data-header-position="fixed">
 
-      <!--  App Topstrip -->
-      <div class="app-topstrip bg-dark py-6 px-3 w-100 d-lg-flex align-items-center justify-content-between">
-        <div class="d-flex align-items-center justify-content-center gap-5 mb-2 mb-lg-0">
-          </a>
-
-          <div class="d-none d-xl-flex align-items-center gap-3">
-              <i class="ti ti-lifebuoy fs-5"></i>
-            </a>
-              <i class="ti ti-gift fs-5"></i>
-            </a>
-          </div>
-        </div>
-
-        <div class="d-lg-flex align-items-center gap-2">
-          <div class="d-flex align-items-center justify-content-center gap-2">
-            <div class="dropdown d-flex">
-                data-bs-toggle="dropdown" aria-expanded="false">
-              </a>
-              <div class="-" aria-labelledby="drop3">
-                <div class="message-body">
-                  <a target="_blank"
-                    class="dropdown-item d-flex align-items-center gap-1">
-                  </a>
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div class="dropdown d-flex">
-              <a class="-" href="javascript:void(0)" id="drop4"
-                data-bs-toggle="dropdown" aria-expanded="false">
-              </a>
-              <div class="-" aria-labelledby="drop4">
-                <div class="message-body">
-                  <a target="_blank"
-                    class="dropdown-item d-flex align-items-center gap-1">
-
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     <!-- Sidebar Start -->
     @include('admin.sidebar')
     <!--  Sidebar End -->
@@ -65,7 +47,7 @@
 <br><br>
         <!-- Konten Feedback -->
         <div class="container-fluid">
-            <h1>Daftar Feedback</h1>
+            <h1>Feedback List</h1>
 
             @if(session('success'))
                 <div class="alert alert-success">
@@ -79,8 +61,8 @@
                         <tr>
                             <th>Nama</th>
                             <th>Tanggal</th>
-                            <th>Isi</th>
-                            <th>Berita</th>
+                            <th>Isi Feedback</th>
+                            <th>Terkait Berita</th> {{-- Judul kolom diubah sedikit --}}
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -88,14 +70,35 @@
                         @foreach($feedbacks as $feedback)
                             <tr>
                                 <td>{{ $feedback->nama }}</td>
-                                <td>{{ $feedback->tanggal }}</td>
-                                <td>{{ $feedback->isi }}</td>
-                                <td>{{ $feedback->berita->judul }}</td>
                                 <td>
+                                    {{-- Format tanggal jika diperlukan, contoh: --}}
+                                    {{ \Carbon\Carbon::parse($feedback->tanggal)->translatedFormat('d M Y H:i') }}
+                                </td>
+                                <td>{{ Str::limit($feedback->isi, 100) }}</td> {{-- Batasi panjang isi feedback di tabel --}}
+                                <td>
+                                    @if ($feedback->berita) {{-- Pastikan berita ada --}}
+                                        {{ $feedback->berita->judul }}
+                                    @else
+                                        <span class="text-muted">Tidak terkait berita</span>
+                                    @endif
+                                </td>
+                                <td class="action-buttons">
+                                    {{-- AWAL TOMBOL BARU --}}
+                                    @if ($feedback->berita) {{-- Hanya tampilkan tombol jika feedback terkait dengan berita --}}
+                                        {{-- Ganti 'admin.berita.show' dengan nama route Anda untuk detail berita admin --}}
+                                        {{-- Pastikan route tersebut menerima ID berita sebagai parameter --}}
+                                        <a href="{{ route('admin.beritas.show', $feedback->berita->id) }}" class="btn btn-sm btn-info" title="Lihat Berita Terkait">
+                                        See
+                                        </a>
+                                    @endif
+                                    {{-- AKHIR TOMBOL BARU --}}
+
                                     <form action="{{ route('admin.feedback.destroy', $feedback->id) }}" method="POST" style="display: inline-block;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus feedback ini?')">Hapus</button>
+                                        <button type="submit" class="btn btn-sm btn-danger" title="Hapus Feedback" onclick="return confirm('Apakah Anda yakin ingin menghapus feedback ini?')">
+                                            Delete
+                                        </button>
                                     </form>
                                 </td>
                             </tr>

@@ -9,11 +9,11 @@
         <div class="breadcrumbs">
             <div class="container">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h2>Edit Feedback</h2>
+                    <h2></h2>
                     <ol>
-                        <li><a href="{{ route('welcome') }}">Beranda</a></li>
-                        <li><a href="{{ route('beritas.public', $feedback->berita_id) }}">Detail Berita</a></li>
-                        <li>Edit Feedback</li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
                     </ol>
                 </div>
             </div>
@@ -45,18 +45,12 @@
                             @method('PUT')
 
                             <div class="mb-3">
-                                <label for="tanggal">Tanggal *</label>
-                                <input type="datetime-local" name="tanggal" id="tanggal" class="form-control" value="{{ old('tanggal', \Carbon\Carbon::parse($feedback->tanggal)->format('Y-m-d\TH:i')) }}" required>
-                                <small class="text-muted">Format: YYYY-MM-DD HH:MM</small>
-                            </div>
-
-                            <div class="mb-3">
                                 <label for="isi">Feedback *</label>
                                 <textarea name="isi" id="isi" class="form-control" rows="5" required>{{ old('isi', $feedback->isi) }}</textarea>
                             </div>
 
                             <button type="submit" class="btn btn-primary">Update Feedback</button>
-                            <a href="{{ route('beritas.show', $feedback->berita_id) }}" class="btn btn-secondary">Kembali</a>
+                            <a href="{{ route('beritas.show', $feedback->berita_id) }}" class="btn btn-secondary">Back</a>
                         </form>
 
                     </div>

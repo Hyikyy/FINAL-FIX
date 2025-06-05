@@ -3,12 +3,12 @@
         <li><a href="{{ route('welcome')}}" class="{{ Route::currentRouteName() == 'welcome' ? 'active' : '' }}">Home</a></li>
 
         {{-- ABOUT US DROPDOWN --}}
-        <li class="dropdown"> {{-- Kelas 'dropdown' di <li> --}}
+        <li class="dropdown">
             <a href="#" class="dropdown-toggle {{ Route::currentRouteName() == 'about_us.showPublic' || Route::currentRouteName() == 'sejarah.showPublic' || Route::currentRouteName() == 'dosen.showPublic' || Route::currentRouteName() == 'teaching_assistants.indexPublic' || Route::currentRouteName() == 'alumni.indexPublic' ? 'active' : '' }}" data-bs-toggle="dropdown" role="button" aria-expanded="false">
-                <span>About Us</span> {{-- Bungkus teks dengan span agar bisa diatur jaraknya dengan panah --}}
+                <span>About Us</span>
             </a>
             <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="{{ route('about_us.showPublic') }}">About Us</a></li> {{-- Tambahkan link utama jika perlu --}}
+                <li><a class="dropdown-item" href="{{ route('about_us.showPublic') }}">About Us</a></li>
                 <li><a class="dropdown-item" href="{{ route('sejarah.showPublic') }}">Sejarah</a></li>
                 <li><a class="dropdown-item" href="{{ route('dosen.showPublic') }}">Dosen</a></li>
                 <li><a class="dropdown-item" href="{{ route('teaching_assistants.indexPublic') }}">Teaching Assistant</a></li>
@@ -17,9 +17,9 @@
         </li>
 
         {{-- ORGANIZATIONAL STRUCTURE DROPDOWN --}}
-        <li class="dropdown"> {{-- Kelas 'dropdown' di <li> --}}
+        <li class="dropdown">
             <a href="#" class="dropdown-toggle {{ Route::currentRouteName() == 'struktur-organisasi.public' || Route::currentRouteName() == 'visi_misi.public' ? 'active' : '' }}" data-bs-toggle="dropdown" role="button" aria-expanded="false">
-                <span>Organizational Structure</span> {{-- Bungkus teks dengan span --}}
+                <span>Organizational Structure</span>
             </a>
             <ul class="dropdown-menu">
                 <li>
@@ -47,6 +47,11 @@
         @endguest
 
         @auth
+            {{--  ADMIN DASHBOARD LINK  --}}
+            @if(Auth::user()->isAdmin())  {{-- Asumsi ada method isAdmin() di User model --}}
+                <li><a href="{{ route('admin.dashboard') }}" class="{{ Route::currentRouteName() == 'admin.dashboard' ? 'active' : '' }}">Dashboard Admin</a></li>
+            @endif
+
             <li class="dropdown profile-dropdown-container">
                 <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" data-bs-offset="30,0" role="button" aria-expanded="false">
                     <i class="bi bi-person-circle" style="font-size: 1.5em;"></i>
@@ -70,7 +75,6 @@
     </ul>
     <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
 </nav>
-
 
 @push('styles')
 <style>

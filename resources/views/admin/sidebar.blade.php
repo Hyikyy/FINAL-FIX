@@ -18,6 +18,17 @@
                     <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
                     <span class="hide-menu">MENU</span>
                 </li>
+
+                {{-- ADMIN DASHBOARD LINK --}}
+                @if(Auth::user()->isAdmin())
+                    <li class="sidebar-item">
+                        <a class="sidebar-link d-flex align-items-center" href="{{ route('admin.dashboard') }}" aria-expanded="false">
+                            <i class="ti ti-home fs-5 me-2"></i>  {{-- Ganti icon sesuai keinginan --}}
+                            <span class="hide-menu">Home</span>
+                        </a>
+                    </li>
+                @endif
+
                 <!-- Menu Items -->
                 <li class="sidebar-item">
                     <a class="sidebar-link d-flex align-items-center" href="{{ route('admin.struktur-organisasi.index') }}" aria-expanded="false">

@@ -43,4 +43,12 @@ class User extends Authenticatable
     protected $casts = [
         // 'email_verified_at' => 'datetime',
     ];
+
+    public function isAdmin()
+    {
+        // Sesuaikan logika ini dengan implementasi role di aplikasi Anda
+        return $this->role === 'admin'; // Contoh jika role disimpan sebagai string 'admin'
+        // atau jika Anda menggunakan enum atau integer:
+        // return $this->role === 1; // Contoh jika role adalah integer (misalnya 1 untuk admin)
+    }
 }

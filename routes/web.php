@@ -104,7 +104,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Admin Routes (Authenticated Admins Only)
     Route::group(['prefix' => 'admin', 'middleware' => 'admin'], function () {
-        Route::get('/dashboard', function () {
+        Route::get('/home', function () {
             return view('admin.dashboard');
         })->name('admin.dashboard');
 

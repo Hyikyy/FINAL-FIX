@@ -20,29 +20,19 @@
         .table th, .table td { vertical-align: middle; }
         .img-thumbnail-custom { width: 100px; height: 75px; object-fit: cover; }
 
-
     /* Styling untuk tombol aksi agar sebaris dan rapi */
     .action-buttons .btn,
     .action-buttons form {
-        display: inline-block; /* Membuat form juga inline */
-        margin-right: 5px;   /* Jarak antar tombol/form */
-        margin-bottom: 5px;  /* Jarak jika tombol wrap ke baris baru di layar kecil */
-        vertical-align: middle; /* Menyamakan alignment vertikal tombol */
+        display: inline-block;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        vertical-align: middle;
     }
 
-    /* Menghilangkan margin kanan pada elemen terakhir */
     .action-buttons .btn:last-child,
     .action-buttons form:last-child {
         margin-right: 0;
     }
-
-    /* Opsional: Jika ingin tombol memiliki lebar minimum agar lebih seragam */
-    /*
-    .action-buttons .btn {
-        min-width: 70px;
-        text-align: center;
-    }
-    */
     </style>
 </head>
 <body>
@@ -65,52 +55,38 @@
                     </div>
                 @endif
 
-                {{-- Filter --}}
-                {{-- Filter --}}
-<div class="card mb-4">
-    <div class="card-header">Filter Galeri</div>
-    <div class="card-body">
-        <form method="GET" action="{{ route('admin.galeri.index') }}" class="row g-3 align-items-end">
-            <div class="col-md-4">
-                <label for="search" class="form-label">Cari Judul:</label>
-                {{-- MENGGUNAKAN HELPER request() --}}
-                <input type="text" name="search" id="search" class="form-control form-control-sm" value="{{ request('search') }}" placeholder="Masukkan judul...">
-            </div>
-            <div class="col-md-4">
-                <label for="kategori_filter" class="form-label">Kategori:</label>
-                <select name="kategori_filter" id="kategori_filter" class="form-select form-select-sm">
-                    <option value="">Semua Kategori</option>
-                    @if(isset($kategoris))
-                        @foreach($kategoris as $kategori)
-                            {{-- MENGGUNAKAN HELPER request() --}}
-                            <option value="{{ $kategori->id }}" {{ request('kategori_filter') == $kategori->id ? 'selected' : '' }}>
-                                {{ $kategori->nama_kategori }}
-                            </option>
-                        @endforeach
-                    @endif
-                </select>
-            </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-info btn-sm w-100"><i class="fas fa-filter"></i> Filter</button>
-            </div>
-            <div class="col-md-2">
-                <a href="{{ route('admin.galeri.index') }}" class="btn btn-secondary btn-sm w-100" title="Reset Filter">
-                    <i class="fas fa-sync-alt"></i> Reset
-                </a>
-            </div>
-        </form>
-    </div>
-</div>
-
-{{-- ... sisa kode untuk tabel ... --}}
-
-{{-- Pagination --}}
-@if(isset($galeris) && $galeris->hasPages())
-<div class="mt-4 d-flex justify-content-center">
-    {{-- $galeris->appends(request()->query())->links() SUDAH BENAR MENGGUNAKAN request() --}}
-    {{ $galeris->appends(request()->query())->links() }}
-</div>
-@endif
+                <div class="card mb-4">
+                    <div class="card-header">Filter Galeri</div>
+                    <div class="card-body">
+                        <form method="GET" action="{{ route('admin.galeri.index') }}" class="row g-3 align-items-end">
+                            <div class="col-md-4">
+                                <label for="search" class="form-label">Cari Judul:</label>
+                                <input type="text" name="search" id="search" class="form-control form-control-sm" value="{{ request('search') }}" placeholder="Masukkan judul...">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="kategori_filter" class="form-label">Kategori:</label>
+                                <select name="kategori_filter" id="kategori_filter" class="form-select form-select-sm">
+                                    <option value="">Semua Kategori</option>
+                                    @if(isset($kategoris))
+                                        @foreach($kategoris as $kategori)
+                                            <option value="{{ $kategori->id }}" {{ request('kategori_filter') == $kategori->id ? 'selected' : '' }}>
+                                                {{ $kategori->nama_kategori }}
+                                            </option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-info btn-sm w-100"><i class="fas fa-filter"></i> Filter</button>
+                            </div>
+                            <div class="col-md-2">
+                                <a href="{{ route('admin.galeri.index') }}" class="btn btn-secondary btn-sm w-100" title="Reset Filter">
+                                    <i class="fas fa-sync-alt"></i> Reset
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
 
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
@@ -131,7 +107,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse ($galeris as $index => $item) {{-- $galeris dari GaleriController@index --}}
+                                    @forelse ($galeris as $index => $item)
                                         <tr>
                                             <td>{{ $galeris->firstItem() + $index }}</td>
                                             <td>
@@ -146,18 +122,12 @@
                                             <td>{{ $item->user->name ?? 'N/A' }}</td>
                                             <td>{{ $item->created_at->translatedFormat('d M Y H:i') }}</td>
                                             <td class="action-buttons">
-                                                <a href="{{ route('admin.galeri.show', $item->id) }}" class="btn btn-info btn-sm" title="Lihat Detail">
-                                                See
-                                                </a>
-                                                <a href="{{ route('admin.galeri.edit', $item->id) }}" class="btn btn-warning btn-sm" title="Edit">
-                                                 Edit
-                                                </a>
+                                                <a href="{{ route('admin.galeri.show', $item->id) }}" class="btn btn-info btn-sm" title="Lihat Detail">See</a>
+                                                <a href="{{ route('admin.galeri.edit', $item->id) }}" class="btn btn-warning btn-sm" title="Edit">Edit</a>
                                                 <form action="{{ route('admin.galeri.destroy', $item->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus item galeri \'{{ $item->judul }}\'?');">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm" title="Hapus">
-                                                    Delete
-                                                    </button>
+                                                    <button type="submit" class="btn btn-danger btn-sm" title="Hapus">Delete</button>
                                                 </form>
                                             </td>
                                         </tr>
@@ -169,10 +139,11 @@
                                 </tbody>
                             </table>
                         </div>
+
                         {{-- Pagination Links --}}
                         @if(isset($galeris) && $galeris->hasPages())
                         <div class="mt-4 d-flex justify-content-center">
-                            {{ $galeris->appends(request()->query())->links() }}
+                            {{ $galeris->appends(request()->query())->links('vendor.pagination.gallery') }}
                         </div>
                         @endif
                     </div>
@@ -183,7 +154,6 @@
             </footer>
         </div>
     </div>
-    {{-- Script JS dasar admin --}}
     <script src="{{ asset('admin/assets/libs/jquery/dist/jquery.min.js') }}"></script>
     <script src="{{ asset('admin/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
     @if(file_exists(public_path('admin/assets/js/sidebarmenu.js'))) <script src="{{ asset('admin/assets/js/sidebarmenu.js') }}"></script> @endif

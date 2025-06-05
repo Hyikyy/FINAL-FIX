@@ -75,7 +75,7 @@
         <!-- Welcome Message -->
         <div class="welcome-message">
           <h2>Selamat Datang, Admin HIMATIF!</h2>
-          <p>Selamat datang di dashboard admin. Gunakan menu di samping untuk mengelola sistem.</p>
+          <p>Selamat datang di home admin. Gunakan menu di samping untuk mengelola sistem.</p>
           <img src="{{ asset('assets/img/himatif/himatif.jpg') }}" alt="Logo HIMATIF" class="welcome-image">
         </div>
 

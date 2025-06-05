@@ -1,48 +1,70 @@
-{{-- File: resources/views/public/teaching_assistants/show_detail_legacy.blade.php (atau nama yang sesuai) --}}
-@extends('layouts.app') {{-- Sesuaikan dengan layout Anda --}}
+{{-- File: resources/views/public/teaching_assistants/show_detail_legacy.blade.php --}}
+@extends('layouts.app')
 
 @section('title', 'Profile Teaching Asisten: ' . $teachingAssistant->nama)
-{{-- Pastikan breadcrumbs diisi dengan benar --}}
+
+@push('styles')
+<style>
+    /* Tambahkan style berikut ke dalam file CSS Anda atau tag <style> */
+    .image-container {
+        height: 300px; /* Sesuaikan tinggi sesuai kebutuhan Anda */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f8f9fa;
+    }
+
+    .image-container img {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+        border-radius: 20px 0 0 20px;
+    }
+
+    .card {
+        height: auto; /* Biarkan tinggi card menyesuaikan dengan konten */
+    }
+</style>
+@endpush
+
 @section('content')
 <main id="main">
 
     <!-- ======= Detail Section ======= -->
-    <section id="details" class="team" style="margin-top: 70px; margin-bottom: 10px;">
-        <div class="container" data-aos="fade-up" style="margin-top: 70px; margin-bottom: 0px;">
+    <section id="details" class="team py-5" style="margin-top: 120px; margin-bottom: 10px;">
+        <div class="container" data-aos="fade-up">
             <div class="row justify-content-center">
                 <div class="col-md-8">
-                    <div class="card shadow" style="border: 1px solid #000;">
+                    <div class="card shadow" style="border: 3px solid #000; border-radius: 20px; overflow: hidden;">
                         <div class="row g-0">
-                            <div class="col-md-4">
-                                <div style="border-right: 1px solid #000; height: 100%; padding: 10px; display: flex; align-items: center; justify-content: center;">
-                                   @if($teachingAssistant->gambar)
-        {{-- INI CARA YANG BENAR BERDASARKAN OUTPUT DEBUGGING ANDA --}}
-        <img src="{{ asset('storage/teaching_assistants/' . $teachingAssistant->gambar) }}" class="card-img rounded-left" alt="{{ $teachingAssistant->nama ?? 'Foto Asisten Dosen' }}" style="object-fit: cover; max-height: 100%; max-width: 100%;">
-    @else
-        <img src="{{ asset('assets/img/no-image.png') }}" class="card-img rounded-left" alt="Default Image" style="object-fit: cover; max-height: 100%; max-width: 100%;">
-    @endif
+                            <div class="col-md-5">
+                                <div class="image-container">
+                                    @if($teachingAssistant->gambar)
+                                        <img src="{{ asset('storage/teaching_assistants/' . $teachingAssistant->gambar) }}" class="img-fluid rounded-start" alt="{{ $teachingAssistant->nama ?? 'Foto Asisten Dosen' }}">
+                                    @else
+                                        <img src="{{ asset('assets/img/no-image.png') }}" class="img-fluid rounded-start" alt="Default Image">
+                                    @endif
                                 </div>
                             </div>
-                            <div class="col-md-8">
-                                <div class="card-body" style="padding: 20px; position: relative; min-height: 200px;">
-                                    {{-- Tampilkan nama jika ada --}}
+                            <div class="col-md-7">
+                                <div class="card-body" style="padding: 30px; position: relative;">
                                     @if($teachingAssistant->nama)
-                                        <h4 class="card-title" style="color: black; margin-bottom: 15px;"><strong>{{ $teachingAssistant->nama }}</strong></h4>
+                                        <h4 class="card-title" style="color: black; margin-bottom: 20px; font-size: 1.5rem;">
+                                            <strong>{{ $teachingAssistant->nama }}</strong>
+                                        </h4>
                                     @endif
 
-                                    <p class="card-text" style="margin-bottom: 10px; color:#000000">
+                                    <p class="card-text" style="margin-bottom: 15px; color:#000000; font-size: 1rem;">
                                         <strong>Jabatan:</strong> {{ $teachingAssistant->nama_jabatan ?? 'Tidak ada jabatan' }}
                                     </p>
-                                    <p class="card-text" style="margin-bottom: 10px; color:#000000">
-                                        <strong style="color:#000000">Deskripsi:</strong>
+                                    <p class="card-text" style="margin-bottom: 15px; color:#000000; font-size: 1rem;">
+                                        <strong>Deskripsi:</strong>
                                         <div style="overflow-x: auto; white-space: normal;">
                                             {!! nl2br(e($teachingAssistant->deskripsi_jabatan ?? 'Tidak ada deskripsi.')) !!}
                                         </div>
                                     </p>
-                                    {{-- Field lain dari model TeachingAssistant bisa ditambahkan di sini --}}
-
-                                    <div style="position: absolute; bottom: 20px; right: 20px;">
-                                        {{-- Link kembali seharusnya ke daftar TA publik --}}
+                                    <br><br><br>
+                                    <div style="position: absolute; bottom: 30px; right: 30px;">
                                         <a href="{{ route('teaching_assistants.indexPublic') }}" class="btn btn-secondary">Back</a>
                                     </div>
                                 </div>
@@ -52,7 +74,6 @@
                 </div>
             </div>
         </div>
-    </div>
-</section><!-- End Detail Section -->
+    </section><!-- End Detail Section -->
 </main>
 @endsection

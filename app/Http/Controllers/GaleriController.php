@@ -65,21 +65,25 @@ class GaleriController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
-    {
-        $query = Galeri::with('kategoriGaleri', 'user')->latest();
+{
+    $query = Galeri::with('kategoriGaleri', 'user')->latest();
 
-        if($request->filled('kategori_filter')) {
-            $query->where('kategori_galeri_id', $request->kategori_filter);
-        }
-        if($request->filled('search')) {
-            $query->where('judul', 'like', '%' . $request->search . '%');
-        }
-
-        $galeris = $query->paginate(10)->appends($request->query());
-        $kategoris = KategoriGaleri::orderBy('nama_kategori')->get(); // Untuk filter
-
-        return view('admin.galeri.index', compact('galeris', 'kategoris'));
+    if($request->filled('kategori_filter')) {
+        $query->where('kategori_galeri_id', $request->kategori_filter);
     }
+    if($request->filled('search')) {
+        $query->where('judul', 'like', '%' . $request->search . '%');
+    }
+
+    // GANTI INI:
+    // $galeris = $query->paginate(10)->appends($request->query());
+    // MENJADI INI:
+    $galeris = $query->paginate(10);
+
+    $kategoris = KategoriGaleri::orderBy('nama_kategori')->get(); // Untuk filter
+
+    return view('admin.galeri.index', compact('galeris', 'kategoris'));
+}
 
     /**
      * Show the form for creating a new resource.

@@ -15,7 +15,7 @@
         <div class="section-header mb-5" style="margin-top: 70px; margin-bottom: 10px;">
           <h2 class="text-center fw-bold" style="color: #333;">Struktur Organisasi HIMATIF</h2>
           <p class="text-center lead" style="color: #555;">
-            Berikut adalah struktur organisasi Himpunan Mahasiswa Teknik Informatika. Setiap anggota memiliki peran penting dalam menjalankan roda organisasi dan mencapai tujuan bersama.
+            Berikut adalah struktur organisasi Himpunan Mahasiswa Teknologi Informasi. Setiap anggota memiliki peran penting dalam menjalankan roda organisasi dan mencapai tujuan bersama.
           </p>
         </div>
 

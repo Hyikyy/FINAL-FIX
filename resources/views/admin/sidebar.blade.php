@@ -44,10 +44,19 @@
                 </li>
                 <li class="sidebar-item">
                     <a class="sidebar-link d-flex align-items-center" href="{{ route('admin.beritas.index') }}" aria-expanded="false">
-                        <i class="ti ti-article fs-5 me-2"></i>
+                        <i class="ti ti-news fs-5 me-2"></i>  <!-- Ikon untuk Blog (Berita) -->
                         <span class="hide-menu">Blog</span>
                     </a>
                 </li>
+
+                {{-- BERITA IMAGES LINK --}}
+                <li class="sidebar-item">
+                    <a class="sidebar-link d-flex align-items-center" href="{{ route('admin.berita_images.index') }}" aria-expanded="false">
+                        <i class="ti ti-camera fs-5 me-2"></i>  <!-- Ganti icon dengan icon gallery -->
+                        <span class="hide-menu">Gambar Berita</span>
+                    </a>
+                </li>
+
                 <li class="sidebar-item">
                     <a class="sidebar-link d-flex align-items-center" href="{{ route('admin.galeri.index') }}" aria-expanded="false">
                         <i class="ti ti-camera fs-5 me-2"></i>

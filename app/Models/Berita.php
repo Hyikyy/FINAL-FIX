@@ -15,7 +15,8 @@ class Berita extends Model
         'tanggal',
         'deskripsi',
         'gambar',
-        'user_id'
+        'user_id',
+        'category_id' // Tambahkan ini
     ];
 
     public function feedback()
@@ -23,5 +24,21 @@ class Berita extends Model
         return $this->hasMany(Feedback::class)->orderBy('tanggal', 'desc'); // Ambil feedback dan urutkan dari terbaru
     }
 
+    // Tambahkan relasi ke model Category
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 
+    // Jika Anda ingin menampilkan nama user yang membuat berita
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    // Relasi dengan BeritaImage
+    public function images()
+    {
+        return $this->hasMany(BeritaImage::class);
+    }
 }

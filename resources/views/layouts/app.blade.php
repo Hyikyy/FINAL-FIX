@@ -27,6 +27,10 @@
   <!-- Main CSS File -->
   <link href="{{ asset('assets/css/main.css') }}" rel="stylesheet">
 
+  <!-- Glide JS -->
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@glidejs/glide@3.6.0/dist/css/glide.core.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@glidejs/glide@3.6.0/dist/css/glide.theme.min.css">
+
   {{-- Ini adalah style inline yang sudah ada, bisa dipertahankan atau dipindah ke main.css --}}
   <style>
     .navbar-hidden {
@@ -55,7 +59,7 @@
 </head>
 
 <body class="index-page" style="background-color: #414544;">
-
+<script src="https://cdn.jsdelivr.net/npm/@glidejs/glide@3.6.0/dist/glide.min.js"></script> 
   <header id="header" class="header fixed-top ">
     {{-- ... (isi header Anda) ... --}}
     <div class="topbar d-flex align-items-center">

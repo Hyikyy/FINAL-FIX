@@ -3,7 +3,7 @@
 
 <head>
   @include('admin.head')
-  <title>Daftar Berita</title>
+  <title>Daftar Gambar Berita</title>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <style>
@@ -47,11 +47,11 @@
       @include('admin.header')
       <!--  Header End -->
 <br><br>
-        <!-- Konten Berita -->
+        <!-- Konten Berita Images -->
         <div class="container-fluid">
-            <h1>Blogs List</h1>
+            <h1>Gambar Berita</h1>
 
-            <a href="{{ route('admin.beritas.create') }}" class="btn btn-primary mb-3">Create Blog</a>
+            <a href="{{ route('admin.berita_images.create') }}" class="btn btn-primary mb-3">Tambah Gambar Berita</a>
 
             @if(session('success'))
                 <div class="alert alert-success">
@@ -63,32 +63,28 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Judul</th>
-                            <th>Tanggal</th>
+                            <th>Berita</th>
                             <th>Gambar</th>
-                            <th>Deskripsi</th>
-                            <th>Kategori</th> <!-- Tambahkan ini -->
+                            <th>Keterangan</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($beritas as $berita)
+                        @foreach($beritaImages as $image)
                             <tr>
-                                <td>{{ $berita->judul }}</td>
-                                <td>{{ $berita->tanggal }}</td>
+                                <td>{{ $image->berita->judul }}</td>
                                 <td>
-                                    @if($berita->gambar)
-                                        <img src="{{ asset('storage/' . $berita->gambar) }}" alt="{{ $berita->judul }}" width="50">
+                                    @if($image->image_path)
+                                        <img src="{{ asset('storage/' . $image->image_path) }}" alt="Gambar Berita" width="50">
                                     @else
                                         Tidak ada gambar
                                     @endif
                                 </td>
-                                <td>{{ $berita->deskripsi }}</td>
-                                <td>{{ $berita->category->nama ?? 'Tidak Ada Kategori' }}</td> <!-- Tambahkan ini -->
+                                <td>{{ $image->keterangan }}</td>
                                 <td  class="action-buttons">
-                                    <a href="{{ route('admin.beritas.show', $berita->id) }}" class="btn btn-sm btn-info">See</a>
-                                    <a href="{{ route('admin.beritas.edit', $berita->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                                    <form action="{{ route('admin.beritas.destroy', $berita->id) }}" method="POST" style="display: inline-block;">
+                                    
+                                    <a href="{{ route('admin.berita_images.edit', $image->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                    <form action="{{ route('admin.berita_images.destroy', $image->id) }}" method="POST" style="display: inline-block;">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus?')">Delete</button>
@@ -100,7 +96,7 @@
                 </table>
             </div>
         </div>
-        <!-- Akhir Konten Berita -->
+        <!-- Akhir Konten Berita Images -->
 
     </div>
   </div>

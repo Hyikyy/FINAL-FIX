@@ -75,6 +75,22 @@
                         </div>
 
                         <div class="mb-3">
+                            <label for="category_id" class="form-label">Kategori</label>
+                            <select class="form-control @error('category_id') is-invalid @enderror" id="category_id" name="category_id">
+                                <option value="">Pilih Kategori</option>
+                                @foreach($categories as $category)
+                                    {{-- selected jika $berita->category_id sama dengan $category->id --}}
+                                    <option value="{{ $category->id }}" {{ $berita->category_id == $category->id ? 'selected' : '' }}>
+                                        {{ $category->nama }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('category_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
                             <label for="deskripsi" class="form-label">Deskripsi</label>
                             <textarea class="form-control @error('deskripsi') is-invalid @enderror" id="deskripsi" name="deskripsi" rows="5" required>{{ old('deskripsi', $berita->deskripsi) }}</textarea>
                             @error('deskripsi')

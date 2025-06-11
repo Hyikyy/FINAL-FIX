@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\StrukturOrganisasiController;
 use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\BeritaController;
+use App\Http\Controllers\BeritaImageController; // Tambahkan ini
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\GaleriController;
@@ -60,6 +61,7 @@ use App\Http\Controllers\SejarahController;
 
     Route::get('/dosen/{dosen}', [DosenController::class, 'showPublicDetail'])->name('dosen.showPublicDetail');
 
+
     Route::get('/about_us', [AboutUsController::class, 'showPublic'])->name('about_us.showPublic');
     Route::get('/about_us/{about_us}', [AboutUsController::class, 'showDetail'])->name('about_us.showDetail');
 
@@ -85,8 +87,6 @@ use App\Http\Controllers\SejarahController;
 
 
 //Route utama dialihkan ke login jika belum login
-
-
 
 Route::get('/feedback/{feedback}/edit', [FeedbackController::class, 'edit'])->name('feedback.edit')->middleware('auth');
 Route::put('/feedback/{feedback}', [FeedbackController::class, 'update'])->name('feedback.update')->middleware('auth');
@@ -238,4 +238,13 @@ Route::group(['middleware' => 'auth'], function () {
             Route::put('/{keuangan}', [KeuanganController::class, 'update'])->name('admin.keuangan.update');
             Route::delete('/{keuangan}', [KeuanganController::class, 'destroy'])->name('admin.keuangan.destroy');
         });
+
+        // BeritaImage Routes (Admin) - NON RESOURCE
+        Route::get('/berita_images', [BeritaImageController::class, 'index'])->name('admin.berita_images.index');
+        Route::get('/berita_images/create', [BeritaImageController::class, 'create'])->name('admin.berita_images.create');
+        Route::post('/berita_images', [BeritaImageController::class, 'store'])->name('admin.berita_images.store');
+        Route::get('/berita_images/{berita_image}', [BeritaImageController::class, 'show'])->name('admin.berita_images.show');
+        Route::get('/berita_images/{berita_image}/edit', [BeritaImageController::class, 'edit'])->name('admin.berita_images.edit');
+        Route::put('/berita_images/{berita_image}', [BeritaImageController::class, 'update'])->name('admin.berita_images.update');
+        Route::delete('/berita_images/{berita_image}', [BeritaImageController::class, 'destroy'])->name('admin.berita_images.destroy');
     });

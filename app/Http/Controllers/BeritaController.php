@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Berita;
-use App\Models\Feedback; // Import model Feedback
+use App\Models\Feedback;
+use App\Models\Category; // Import model Category
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage; // Import untuk file storage
+use Illuminate\Support\Facades\Storage;
 
 class BeritaController extends Controller
 {
@@ -23,40 +24,38 @@ class BeritaController extends Controller
      */
     public function create()
     {
-        return view('admin.beritas.create');
+        $categories = Category::all(); // Ambil semua kategori
+        return view('admin.beritas.create', compact('categories')); // Kirim ke view
     }
 
     /**
      * Store a newly created resource in storage (Admin).
      */
     public function store(Request $request)
-{
-    $request->validate([
-        'judul' => 'required',
-        'tanggal' => 'required|date',
-        'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        'deskripsi' => 'required',
-    ]);
+    {
+        $request->validate([
+            'judul' => 'required',
+            'tanggal' => 'required|date',
+            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'deskripsi' => 'required',
+            'category_id' => 'nullable|exists:categories,id', // Validasi category_id
+        ]);
 
-    $data = $request->all();
+        $data = $request->all();
+        $data['user_id'] = auth()->id();
 
-    // Tambahkan user_id
-    $data['user_id'] = auth()->id();
+        if ($request->hasFile('gambar')) {
+            $file = $request->file('gambar');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('gambar', $fileName, 'public');
+            $data['gambar'] = $path;
+        }
 
-    // Handle upload file jika ada
-    if ($request->hasFile('gambar')) {
-        $file = $request->file('gambar');
-        $fileName = time() . '_' . $file->getClientOriginalName();
-        $path = $file->storeAs('gambar', $fileName, 'public');
-        $data['gambar'] = $path;
+        Berita::create($data);
+
+        return redirect()->route('admin.beritas.index')
+            ->with('success', 'Berita berhasil ditambahkan.');
     }
-
-    Berita::create($data);
-
-    return redirect()->route('admin.beritas.index')
-        ->with('success', 'Berita berhasil ditambahkan.');
-}
-
 
     /**
      * Display the specified resource (Admin).
@@ -68,8 +67,8 @@ class BeritaController extends Controller
                              ->where('keywords', 'like', '%'.$berita->keywords.'%')
                              ->limit(3)
                              ->get();
-        //Eager load feedback dengan eager load user
-        $berita->load('feedback.user');
+        //Eager load feedback dengan eager load user dan images
+        $berita->load('feedback.user', 'images'); 
         return view('beritas.show', compact('berita', 'recentBeritas','relatedBeritas'));
     }
 
@@ -78,7 +77,8 @@ class BeritaController extends Controller
      */
     public function edit(Berita $berita)
     {
-        return view('admin.beritas.edit', compact('berita'));
+        $categories = Category::all(); // Ambil semua kategori
+        return view('admin.beritas.edit', compact('berita', 'categories')); // Kirim ke view
     }
 
     /**
@@ -89,15 +89,14 @@ class BeritaController extends Controller
         $request->validate([
             'judul' => 'required',
             'tanggal' => 'required|date',
-            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Contoh validasi file
+            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'deskripsi' => 'required',
+            'category_id' => 'nullable|exists:categories,id', // Validasi category_id
         ]);
 
         $data = $request->all();
 
-        // Handle upload file jika ada (update)
         if ($request->hasFile('gambar')) {
-            // Hapus file lama jika ada
             if ($berita->gambar) {
                 Storage::disk('public')->delete($berita->gambar);
             }
@@ -133,9 +132,15 @@ class BeritaController extends Controller
     /**
      * Display the specified resource (Public).
      */
-    public function showPublic()
+    public function showPublic(Request $request)
     {
-        $beritas = Berita::all();
-        return view('beritas.index', compact('beritas'));
+        $categoryId = $request->query('category');
+
+        $beritas = Berita::when($categoryId, function ($query, $categoryId) {
+            return $query->where('category_id', $categoryId);
+        })->get();
+
+        $categories = Category::all(); // Kirimkan daftar kategori ke view
+        return view('beritas.index', compact('beritas', 'categories'));
     }
 }

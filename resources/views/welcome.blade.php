@@ -148,7 +148,7 @@
        Ini seharusnya sudah menjadi perilaku default untuk elemen block. */
     width: 100% !important;
     max-width: none !important; /* Hapus batasan max-width jika ada */
-    /* Untuk memastikan padding tidak mengurangi lebar efektif *konten* jika box-sizing salah,
+    /* Untuk memastikan padding tidak mengurangi lebar efektif konten jika box-sizing salah,
        tapi ini seharusnya sudah ditangani oleh Bootstrap. */
     box-sizing: border-box !important;
     }
@@ -188,137 +188,165 @@
 <main id="main">
 
     <!-- ======= Agenda Calendar Section ======= -->
-    <section id="agenda-calendar" class="agenda-calendar" style="background-color: #414544">
-        <div class="container">
-            <div class="text-center mb-4">
-                <h2>Agenda Kegiatan</h2>
-                <p class="text" style="color:#ffffff">Ikuti perkembangan kegiatan HIMATIF melalui kalender agenda kami.</p>
-            </div>
+<!-- ======= Agenda Calendar Section ======= -->
+<section id="agenda-calendar" class="agenda-calendar section-bg py-5" style="background-color: #414544"> {{-- Tambah section-bg dan padding --}}
+    <div class="container" data-aos="fade-up">
+        <div class="section-header text-center mb-5"> {{-- section-header lebih standar untuk judul section --}}
+            <h2>Agenda Kegiatan</h2>
+            <p>Ikuti perkembangan kegiatan HIMATIF melalui kalender agenda kami.</p>
+        </div>
 
-            <div class="row">
-                <!-- Kolom Kiri: Daftar Agenda -->
-                <div class="col-md-8">
-                    <div class="bg-white p-3 rounded shadow-sm mb-4">
-                        <h3 class="text-primary mb-3">Agenda Terdekat</h3>
-                        @if($agendasTerdekat->count() > 0)
-                        <div class="list-group" style="max-height: 300px; overflow-y: auto;">
-                            @foreach($agendasTerdekat as $agenda)
-                            <a href="{{ route('agendas.public', $agenda->id) }}"
-                                class="list-group-item list-group-item-action flex-column align-items-start">
+        <div class="row gy-4"> {{-- gy-4 untuk gutter vertikal --}}
+            <!-- Kolom Kiri: Daftar Agenda -->
+            <div class="col-lg-7 col-md-6"> {{-- Lebarkan sedikit kolom agenda --}}
+                <div class="bg-white p-4 rounded shadow-sm mb-4" data-aos="fade-right" data-aos-delay="100">
+                    <h3 class="h5 fw-bold text-primary mb-3"><i class="fas fa-calendar-alt me-2"></i>Agenda Terdekat</h3>
+                    @if(isset($agendasTerdekat) && $agendasTerdekat->count() > 0)
+                    <div class="list-group" style="max-height: 280px; overflow-y: auto;">
+                        @foreach($agendasTerdekat as $agenda)
+                            {{-- MODIFIKASI LINK AGENDA --}}
+                            <a href="{{ $agenda->berita_id ? route('beritas.show', $agenda->berita_id) : route('agendas.public', $agenda->id) }}"
+                                class="list-group-item list-group-item-action flex-column align-items-start mb-2 border-start-3 {{ $agenda->berita_id ? 'border-primary' : 'border-secondary' }}"
+                                title="{{ $agenda->berita_id ? 'Lihat detail berita terkait' : 'Lihat detail agenda' }}">
                                 <div class="d-flex w-100 justify-content-between">
-                                    <h5 class="mb-1 text-info">{{ $agenda->nama_kegiatan }}</h5>
+                                    <h5 class="mb-1 fw-semibold text-dark">{{ $agenda->nama_kegiatan }}</h5>
                                     <small class="text-muted">
-                                        {{ \Carbon\Carbon::parse($agenda->tanggal_kegiatan)->isoFormat('dddd, D MMMM YYYY') }}
+                                        {{ \Carbon\Carbon::parse($agenda->tanggal_kegiatan)->isoFormat('D MMM YYYY') }}
                                     </small>
                                 </div>
-                                <p class="mb-1 text-truncate">{{ Str::limit($agenda->deskripsi, 100) }}</p>
+                                <p class="mb-1 text-muted small text-truncate">{{ Str::limit(strip_tags($agenda->deskripsi), 90) }}</p>
+                                @if($agenda->berita_id)
+                                    <small class="text-info fst-italic"><i class="fas fa-newspaper me-1"></i>Berita terkait tersedia</small>
+                                @endif
                             </a>
-                            @endforeach
-                        </div>
-                        @else
-                        <p class="text-black">Tidak ada agenda terdekat saat ini.</p>
-                        @endif
+                        @endforeach
                     </div>
-
-                    <div class="bg-white p-3 rounded shadow-sm mb-4">
-                        <h3 class="text-success mb-3">Agenda Rutin Bulan Ini</h3>
-                        @if($agendasRutin->count() > 0)
-                        <div class="list-group" style="max-height: 200px; overflow-y: auto;">
-                            @foreach($agendasRutin as $agenda)
-                            <a href="{{ route('agendas.public', $agenda->id) }}" class="list-group-item list-group-item-action">
-                                {{ $agenda->nama_kegiatan }} -
-                                {{ \Carbon\Carbon::parse($agenda->tanggal_kegiatan)->isoFormat('dddd, D MMMM YYYY') }}
-                            </a>
-                            @endforeach
-                        </div>
-                        @else
-                        <p class="text-black">Tidak ada agenda rutin bulan ini.</p>
-                        @endif
-                    </div>
+                    @else
+                    <p class="text-muted fst-italic">Tidak ada agenda terdekat saat ini.</p>
+                    @endif
                 </div>
 
-                <!-- Kolom Kanan: Kalender Bulanan -->
-                <div class="col-md-4">
-                    <div class="bg-white p-3 rounded shadow-sm">
-                        @php
-                        $currentDate = \Carbon\Carbon::now();
-                        $year = $currentDate->year;
-                        $month = $currentDate->month;
-
-                        $date = \Carbon\Carbon::createFromDate($year, $month, 1);
-                        $firstDayOfMonth = $date->copy()->startOfMonth();
-                        $lastDayOfMonth = $date->copy()->endOfMonth();
-                        $startDayOfWeek = $firstDayOfMonth->dayOfWeekIso;
-
-                        // Kumpulkan tanggal agenda di bulan ini untuk penandaan
-                        $eventDatesThisMonth = \App\Models\Agenda::whereYear('tanggal_kegiatan', $year)
-                        ->whereMonth('tanggal_kegiatan', $month)
-                        ->pluck('tanggal_kegiatan')
-                        ->map(function($dateStr) {
-                        return \Carbon\Carbon::parse($dateStr)->day;
-                        })->unique()->toArray();
-                        @endphp
-
-                        <h4 class="text-center text-info">{{ $date->isoFormat('MMMM YYYY') }}</h4>
-
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Sn</th>
-                                    <th>Sl</th>
-                                    <th>Rb</th>
-                                    <th>Km</th>
-                                    <th>Jm</th>
-                                    <th class="text-danger">Sb</th>
-                                    <th class="text-danger">Mg</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    @for ($i = 1; $i < $startDayOfWeek; $i++)
-                                        <td></td>
-                                        @endfor
-
-                                        @for ($day = 1; $day <= $lastDayOfMonth->day; $day++)
-                                            @php
-                                            $currentDayDate = \Carbon\Carbon::createFromDate($year, $month, $day);
-                                            $isWeekend = $currentDayDate->isWeekend();
-                                            $hasEvent = in_array($day, $eventDatesThisMonth);
-                                            $isToday = $currentDayDate->isToday();
-
-                                            $dayClass = '';
-                                            if ($isWeekend) $dayClass .= 'text-danger ';
-                                            if ($hasEvent) $dayClass .= 'bg-info text-white ';
-                                            if ($isToday) $dayClass .= 'table-primary font-weight-bold';
-
-                                            @endphp
-                                            <td class="{{ trim($dayClass) }}">
-                                                {{ $day }}
-                                            </td>
-
-                                            @if (($startDayOfWeek + $day - 1) % 7 == 0)
-                                </tr>
-                                <tr>
-                                    @endif
-                                    @endfor
-
-                                    @if (($startDayOfWeek + $lastDayOfMonth->day - 1) % 7 != 0)
-                                        @for ($i = ($startDayOfWeek + $lastDayOfMonth->day - 1) % 7 + 1; $i <= 7; $i++)
-                                            <td></td>
-                                            @endfor
-                                            @endif
-                                </tr>
-                            </tbody>
-                        </table>
-
-                        <div class="text-center">
-                            <a href="{{ route('agendas.index') }}" class="btn btn-outline-dark">See All Agenda</a>
-                        </div>
+                <div class="bg-white p-4 rounded shadow-sm mb-4" data-aos="fade-right" data-aos-delay="200">
+                    <h3 class="h5 fw-bold text-success mb-3"><i class="fas fa-redo-alt me-2"></i>Agenda Rutin Bulan Ini</h3>
+                    @if(isset($agendasRutin) && $agendasRutin->count() > 0)
+                    <div class="list-group" style="max-height: 220px; overflow-y: auto;">
+                        @foreach($agendasRutin as $agenda)
+                            {{-- MODIFIKASI LINK AGENDA --}}
+                            <a href="{{ $agenda->berita_id ? route('beritas.show', $agenda->berita_id) : route('agendas.public', $agenda->id) }}"
+                               class="list-group-item list-group-item-action mb-2 border-start-3 {{ $agenda->berita_id ? 'border-primary' : 'border-secondary' }}"
+                               title="{{ $agenda->berita_id ? 'Lihat detail berita terkait' : 'Lihat detail agenda' }}">
+                                <div class="d-flex w-100 justify-content-between align-items-center">
+                                    <span class="text-dark">{{ $agenda->nama_kegiatan }}</span>
+                                    <small class="text-muted">
+                                        {{ \Carbon\Carbon::parse($agenda->tanggal_kegiatan)->isoFormat('D MMM') }}
+                                    </small>
+                                </div>
+                                @if($agenda->berita_id)
+                                    <small class="text-info fst-italic d-block mt-1"><i class="fas fa-newspaper me-1"></i>Ada berita terkait</small>
+                                @endif
+                            </a>
+                        @endforeach
                     </div>
+                    @else
+                    <p class="text-muted fst-italic">Tidak ada agenda rutin bulan ini.</p>
+                    @endif
                 </div>
             </div>
+
+
+    <!-- Kolom Kanan: Kalender Bulanan -->
+        <div class="col-lg-5 col-md-6">
+            <div class="bg-white p-3 rounded shadow-sm sticky-top" style="top: 100px;" data-aos="fade-left" data-aos-delay="300">
+                @php
+                    // Variabel $currentYear, $currentMonth, dan $agendasForCalendar dikirim dari WelcomeController
+                    $date = \Carbon\Carbon::createFromDate($currentYear, $currentMonth, 1);
+                    $firstDayOfMonth = $date->copy()->startOfMonth();
+                    $lastDayOfMonth = $date->copy()->endOfMonth();
+                    $startDayOfWeek = $firstDayOfMonth->dayOfWeekIso; // Senin = 1, Minggu = 7
+                @endphp
+
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                    {{-- Pastikan route 'welcome' bisa menerima parameter 'month' dan 'year' --}}
+                <a href="{{ route('welcome', ['month' => $date->copy()->subMonth()->month, 'year' => $date->copy()->subMonth()->year]) }}" class="btn btn-sm btn-outline-secondary">« Prev</a>
+                <h4 class="text-center text-primary mb-0">{{ $date->isoFormat('MMMM YYYY') }}</h4>
+                <a href="{{ route('welcome', ['month' => $date->copy()->addMonth()->month, 'year' => $date->copy()->addMonth()->year]) }}" class="btn btn-sm btn-outline-secondary">Next »</a>
+            </div>
+
+            <table class="table table-bordered text-center" style="font-size: 0.9rem;">
+                <thead class="table-light">
+                    <tr>
+                        <th>Sn</th><th>Sl</th><th>Rb</th><th>Km</th><th>Jm</th><th class="text-danger">Sb</th><th class="text-danger">Mg</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        @for ($i = 1; $i < $startDayOfWeek; $i++)
+                            <td></td>
+                        @endfor
+
+                        @for ($day = 1; $day <= $lastDayOfMonth->day; $day++)
+                            @php
+                            $currentDayDate = \Carbon\Carbon::createFromDate($currentYear, $currentMonth, $day);
+                            $isWeekend = $currentDayDate->isWeekend();
+                            // Mengambil agenda untuk hari ke-$day dari collection yang sudah di-keyBy hari
+                            $agendaHariIni = $agendasForCalendar->get($day);
+                            $hasEvent = !is_null($agendaHariIni);
+                            $isToday = $currentDayDate->isToday();
+
+                            $link = null; // Inisialisasi link
+                            $titleAttribute = ''; // Inisialisasi title untuk tooltip
+                            $cellStyle = ''; // Untuk style inline jika perlu
+
+                            if ($hasEvent) {
+                                $titleAttribute = $agendaHariIni->nama_kegiatan; // Default title
+                                // Tentukan link berdasarkan apakah agenda punya berita_id
+                                if ($agendaHariIni->berita_id) {
+                                    $link = route('beritas.show', $agendaHariIni->berita_id);
+                                    $titleAttribute .= ' (Lihat Berita)';
+                                } else {
+                                    // Jika tidak ada berita_id, arahkan ke detail agenda publik
+                                    // Pastikan route 'agendas.public' ada dan menerima parameter agenda (ID atau slug)
+                                    $link = route('agendas.public', $agendaHariIni->id);
+                                    $titleAttribute .= ' (Lihat Detail Agenda)';
+                                }
+                            }
+
+                            // Styling visual di sel kalender
+                            if ($hasEvent) {
+                                 $cellStyle = 'background-color: #0d6efd; color: white; font-weight: bold; border-radius: 50%;'; // Biru primary Bootstrap
+                            } elseif ($isToday) {
+                                 $cellStyle = 'background-color: #cfe2ff; border-radius: 50%;'; // Biru info light Bootstrap
+                            } elseif ($isWeekend) {
+                                 $cellStyle = 'color: #dc3545;'; // Merah danger Bootstrap
+                            }
+                            @endphp
+                            <td style="padding: 0.3rem 0.1rem; {{ $hasEvent && $link ? 'cursor:pointer;' : '' }}"
+                                @if($link) onclick="window.location.href='{{ $link }}'" title="{{ $titleAttribute }}" @endif>
+                                <span style="{{ $cellStyle }} display: inline-block; width: 2.2em; height: 2.2em; line-height: 1.8em; text-align:center;">
+                                 {{ $day }}
+                                </span>
+                            </td>
+
+                            @if (($startDayOfWeek + $day - 1) % 7 == 0 && $day != $lastDayOfMonth->day)
+                                </tr><tr>
+                            @endif
+                        @endfor
+
+                        @if (($startDayOfWeek + $lastDayOfMonth->day - 1) % 7 != 0)
+                            @for ($i = ($startDayOfWeek + $lastDayOfMonth->day - 1) % 7; $i < 7-1; $i++)
+                                <td></td>
+                            @endfor
+                        @endif
+                    </tr>
+                </tbody>
+            </table>
+            <div class="text-center mt-3">
+                <a href="{{ route('agendas.index') }}" class="btn btn-outline-primary btn-sm">See All Agenda</a>
+         </div>
         </div>
-    </section><!-- End Agenda Calendar Section -->
+        </div>
+        </div>
+</section><!-- End Agenda Calendar Section -->
 
      <section id="recent-posts" class="recent-posts" style="background-color: #414544; color:#ffffff; padding-top: 60px; padding-bottom: 60px;">
         <div class="container" data-aos="fade-up">
@@ -332,7 +360,7 @@
             {{-- gy-4 memberikan gutter vertikal, justify-content-center untuk item ganjil terakhir --}}
             <div class="row gy-4 justify-content-center">
                 @forelse($beritasTerbaru as $berita)
-                    {{-- .col-*-* d-flex align-items-stretch AKAN MENYAMAKAN TINGGI KOLOM DALAM SATU BARIS --}}
+                    {{-- .col-- d-flex align-items-stretch AKAN MENYAMAKAN TINGGI KOLOM DALAM SATU BARIS --}}
                     <div class="col-xl-4 col-md-6 d-flex align-items-stretch">
                         {{-- article h-100 d-flex flex-column AKAN MEMBUAT CARD MENGISI TINGGI KOLOM
                              DAN MENGATUR KONTEN INTERNALNYA DENGAN FLEX --}}

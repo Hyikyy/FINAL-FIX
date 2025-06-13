@@ -11,34 +11,46 @@ use Illuminate\Http\Request;
 
 class WelcomeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $beritasTerbaru = Berita::orderBy('tanggal', 'desc')->take(6)->get(); // Ambil 6 berita terbaru
+        $beritasTerbaru = Berita::orderBy('tanggal', 'desc')->take(6)->get();
         $agendasTerdekat = Agenda::where('tanggal_kegiatan', '>=', now())
                                     ->orderBy('tanggal_kegiatan', 'asc')
-                                    ->take(3)
+                                    ->take(5)
                                     ->get();
-        $agendasRutin = Agenda::whereMonth('tanggal_kegiatan', now()->month)
+
+
+
+    $currentYear = $request->input('year', Carbon::now()->year);
+    $currentMonth = $request->input('month', Carbon::now()->month);
+
+    $agendasRutin = Agenda::whereMonth('tanggal_kegiatan', $currentMonth)
+                                ->whereYear('tanggal_kegiatan', $currentYear)
+                                // ->where('jenis', 'rutin') // Sesuaikan jika ada kolom jenis
                                 ->orderBy('tanggal_kegiatan', 'asc')
+                                ->take(5)
                                 ->get();
 
-        $visiMisi = VisiMisi::all();  // Ambil data Visi dan Misi
+    $visiMisi = VisiMisi::all();
+    // PENTING: Ambil SEMUA agenda untuk bulan dan tahun yang ditampilkan kalender
+    // Kemudian di-keyBy hari agar mudah diakses di view
+    $agendasForCalendar = Agenda::whereYear('tanggal_kegiatan', $currentYear)
+                                ->whereMonth('tanggal_kegiatan', $currentMonth)
+                                ->orderBy('tanggal_kegiatan', 'asc') // Urutkan, meskipun keyBy akan ambil salah satu
+                                ->get()
+                                ->keyBy(function ($item) {
+                                    return Carbon::parse($item->tanggal_kegiatan)->day;
+                                });
 
-        return view('welcome', compact('beritasTerbaru', 'agendasTerdekat', 'agendasRutin', 'visiMisi'));
-
-        $agendasRutin = Agenda::where('jenis', 'rutin') // Ganti 'jenis' dengan kolom yang sesuai
-            ->where('tanggal_kegiatan', '>=', Carbon::now()->startOfMonth())
-            ->where('tanggal_kegiatan', '<=', Carbon::now()->endOfMonth())
-            ->orderBy('tanggal_kegiatan')
-            ->limit(5) // Batasi jumlah agenda yang ditampilkan
-            ->get();
-
-        $agendasTerdekat = Agenda::where('tanggal_kegiatan', '>=', Carbon::now())
-            ->orderBy('tanggal_kegiatan')
-            ->limit(5) // Batasi jumlah agenda yang ditampilkan
-            ->get();
-
-
-        return view('welcome', compact('agendasRutin', 'agendasTerdekat'));
+    return view('welcome', compact(
+        'beritasTerbaru',
+        'agendasTerdekat',
+        'agendasRutin',
+        'visiMisi',
+        'request',
+        'agendasForCalendar', 
+        'currentYear',
+        'currentMonth'
+    ));
     }
 }
